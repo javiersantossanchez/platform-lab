@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  general-service:
+    image: com.microservice.platform.general.service
+    container_name: general-service
+    hostname: general-service
+    ports:
+      - "8889:8889"
+    networks:
+      - microservice-platform

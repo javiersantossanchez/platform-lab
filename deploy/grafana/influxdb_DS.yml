@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    uid: "P951FEA4DE68E13C5"
+    typeName: InfluxDB
+    typeLogoUrl: public/app/plugins/datasource/influxdb/img/influxdb_logo.svg
+    access: proxy
+    url: "http://influxdb:8086"
+    database: krakend
+    basicAuth: false
+    isDefault: false
+    user: admin
+    secureJsonData:
+    password: 12345678
+    readOnly: false

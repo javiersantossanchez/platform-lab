@@ -1,0 +1,74 @@
+{
+  "version": 3,
+  "extra_config": {
+    "security/cors": {
+      "allow_origins": [
+        "*"
+      ],
+      "expose_headers": [
+        "Content-Length"
+      ],
+      "max_age": "12h",
+      "allow_methods": [
+        "GET",
+        "HEAD",
+        "PUT",
+        "POST"
+      ]
+    },
+    "telemetry/influx":{
+      "address":"http://influxdb:8086",
+      "ttl":"25s",
+      "buffer_size":0,
+      "db": "krakend",
+      "username": "admin",
+      "password": "12345678"
+    },
+    "telemetry/metrics": {
+      "collection_time": "30s",
+      "listen_address": "127.0.0.1:8090"
+    },
+    "telemetry/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true,
+      "format": "default"
+    }
+  },
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "name": "general.microservice",
+  "endpoints": [
+    {
+      "endpoint": "/general-api/credentials",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": [
+        "Authorization"
+      ],
+      "extra_configdisable": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keykloak-security-proxy:8081/realms/microservice.plaform/protocol/openid-connect/certs",
+          "disable_jwk_security":true,
+          "operation_debug": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/general-api/credentials",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {},
+          "host": [
+            "general-service:8889"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }
+  ]
+}

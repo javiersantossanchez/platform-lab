@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+      volumes:
+        - ~/workspace/general.microservice/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "dockerhost:192.168.66.207"
+    networks:
+      - microservice-network
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - 3000:3000
+    networks:
+      - microservice-network
+networks:
+  microservice-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.37.0.0/25

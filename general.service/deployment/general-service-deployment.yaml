@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: general-microservice-deployment
+  labels:
+    app: general-microservice
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: general-microservice
+  template:
+    metadata:
+      labels:
+        app: general-microservice
+    spec:
+      containers:
+        - image: docker.io/library/com.microservice.platform.general.service
+          name: general-microservice
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8889

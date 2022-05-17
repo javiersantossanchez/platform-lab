@@ -1,0 +1,101 @@
+version: '3.7'
+services:
+  ######
+  #  Sonar its no ready
+  ######
+  sonar:
+    image: sonarqube:latest
+    container_name: sonarqube
+    hostname: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - microservice-platform
+########
+#  Krakend configuration
+#######
+  krakend-proxy:
+    image: devopsfaith/krakend:2.0.2
+    container_name: krakend-proxy
+    hostname: krakend-proxy
+    ports:
+      - "8080:8080" # regular port used by the client to call the API
+      - "8090:8090" # I need to check how krakend is using this port
+    volumes:
+      - ./krakend:/etc/krakend # volume use to include the json configuration file (https://designer.krakend.io/#!/ )
+    extra_hosts:
+      - "keykloak-security-proxy:172.26.0.1"
+    networks:
+      - microservice-platform
+  keykloak-security:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keykloak-security
+    hostname: keykloak-security
+    networks:
+      - microservice-platform
+    ports:
+      - "8087:8080"  # expose to host port 8403 use the 8403 por on host
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - start-dev
+#https://cloudnativereference.dev/related-repositories/keycloak/  to generate token
+######
+#  Graphite DB to storage load testing
+######
+  graphite:
+    image: graphiteapp/graphite-statsd:latest
+    container_name: graphite
+    hostname: graphite
+    ports:
+      - '80:80'
+      - '81:81'
+      - '2003:2003'
+      - '2004:2004'
+      - '2023:2023'
+      - '2024:2024'
+      - '8125:8125'
+      - '8126:8126'
+    networks:
+      - microservice-platform
+######
+#  Influx DB to storage load testing
+######
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    hostname: influxdb
+    ports:
+      - '8086:8086'
+    networks:
+      - microservice-platform
+    environment:
+      INFLUXDB_USER: user
+      INFLUXDB_USER_PASSWORD: 12345678
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: 12345678
+      INFLUXDB_DB: krakend
+#####
+# Grafana to display monitoring
+# check that for https://github.com/Maronato/grafana/tree/example/grafana/dashboards dahsboard configuration
+####
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    hostname: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/graphite_DS.yml:/etc/grafana/provisioning/datasources/graphite_DS.yml
+      - ./grafana/influxdb_DS.yml:/etc/grafana/provisioning/datasources/influxdb_DS.yml
+      - ./grafana/krakend_Dashboard.yml:/etc/grafana/provisioning/dashboards/krakend_Dashboard.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - microservice-platform
+networks:
+  microservice-platform:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/25

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: general-service
+  name: general-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8889
+  type: LoadBalancer
+  selector:
+    app: general-service
