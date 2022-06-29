@@ -1,0 +1,16 @@
+# I need to update and review this file
+
+version: '3.4'
+
+services:
+  userservice:
+    image: userservice
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3500:3500
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "index.js"]

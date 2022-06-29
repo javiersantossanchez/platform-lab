@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-microservice-deployment
+  #labels:
+  #  app: general-microservice
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-microservice
+  template:
+    metadata:
+      labels:
+        app: user-microservice
+    spec:
+      containers:
+        - image: docker.io/library/com.microservice.platform.user.service
+          name: user-microservice-conainer
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3500
