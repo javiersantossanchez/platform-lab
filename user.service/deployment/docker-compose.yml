@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  userservice:
+    image: com.microservice.platform.user.service
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3500:3500
