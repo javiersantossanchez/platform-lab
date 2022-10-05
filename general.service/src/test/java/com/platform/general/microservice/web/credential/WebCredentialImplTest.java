@@ -1,9 +1,13 @@
 package com.platform.general.microservice.web.credential;
 
 import com.github.javafaker.Faker;
+import com.platform.general.microservice.exceptions.IllegalArgumentException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -45,6 +49,54 @@ public class WebCredentialImplTest {
         Assertions.assertNotNull(credentialCreated.getId());
 
         Mockito.verify(creator,Mockito.times(1)).create(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @EmptySource
+    public void createNewCredentialWhenEmptyPassword(String password){
+
+        WebCredential newCredential = new WebCredential();
+        newCredential.setPassword(password);
+        newCredential.setUserName(faker.name().username());
+        newCredential.setWebSite(faker.internet().domainName());
+        newCredential.setId(UUID.randomUUID());
+
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->{target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());});
+        Assertions.assertEquals(IllegalArgumentException.Argument.PASSWORD,exception.getArgument());
+        Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @EmptySource
+    public void createNewCredentialWhenEmptyUserName(String userName){
+
+        WebCredential newCredential = new WebCredential();
+        newCredential.setPassword(faker.internet().password());
+        newCredential.setUserName(userName);
+        newCredential.setWebSite(faker.internet().domainName());
+        newCredential.setId(UUID.randomUUID());
+
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->{target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());});
+        Assertions.assertEquals(IllegalArgumentException.Argument.USER_NAME,exception.getArgument());
+        Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @EmptySource
+    public void createNewCredentialWhenEmptyWebSite(String webSite){
+
+        WebCredential newCredential = new WebCredential();
+        newCredential.setPassword(faker.internet().password());
+        newCredential.setUserName(faker.name().username());
+        newCredential.setWebSite(webSite);
+        newCredential.setId(UUID.randomUUID());
+
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->{target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());});
+        Assertions.assertEquals(IllegalArgumentException.Argument.WEB_SITE,exception.getArgument());
+        Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
 
     @Test
