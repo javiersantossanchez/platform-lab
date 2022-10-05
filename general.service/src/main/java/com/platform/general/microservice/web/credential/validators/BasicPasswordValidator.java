@@ -1,4 +1,4 @@
-package com.platform.general.microservice.web.credential;
+package com.platform.general.microservice.web.credential.validators;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,20 +17,22 @@ public class BasicPasswordValidator implements PasswordValidator {
      * Has upper and lower case
      * digits are allows,but not mandatory
      * characters a-z | A-Z
-     * nt special character
+     * not special character
      * not empty
      * not null
      */
     @Override
     public boolean isValid(String password){
         if(StringUtils.isBlank(password)){
-
             return false;
         }
         if(!StringUtils.isMixedCase(password)){
             return false;
         }
         if(StringUtils.containsWhitespace(password)){
+            return false;
+        }
+        if(!StringUtils.isAlphanumeric(password)){
             return false;
         }
         if(password.length() <= 10){

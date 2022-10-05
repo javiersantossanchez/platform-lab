@@ -1,20 +1,20 @@
 package com.platform.general.microservice.web.credential.adapters.web;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.platform.general.microservice.web.credential.WebCredential;
+import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import com.platform.general.microservice.web.credential.ports.in.WebCredentialService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/credentials")
+@RequestMapping("/web-credentials")
 public class CredentialApi {
     private static final Logger LOGGER = LoggerFactory.getLogger(CredentialApi.class);
 
@@ -22,27 +22,30 @@ public class CredentialApi {
     WebCredentialService webCredential;
 
     @GetMapping("")
-    List<WebCredential> getAll(HttpServletRequest request) {
-        request.getHeaderNames().asIterator().forEachRemaining(item -> LOGGER.info("Headers: "+item));
-/**        try {
-            DecodedJWT jwt = JWT.decode("");
-        } catch (JWTDecodeException exception){
-            //Invalid token
-        }
- */
-        LOGGER.info("Getting all web credentials");
-        return webCredential.findAll();
+    ResponseEntity<List<WebCredential>> getAll(HttpServletRequest request) {
+        List<WebCredential> credentialList = webCredential.findAll();
+        LOGGER.debug("The user searching all the credentials {}",credentialList);
+        return ResponseEntity.ok(credentialList);
+    }
+
+    @GetMapping("/{credentialId}")
+    ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId) {
+        WebCredential credential = webCredential.findCredential(credentialId);
+        LOGGER.debug("The user search credential {}",credential);
+        return ResponseEntity.ok(credential);
     }
 
     @PostMapping("")
-    void createNewCredential() {
-        webCredential.createNewWebCredential();
+    ResponseEntity<WebCredential> createNewCredential(@RequestBody WebCredentialParam newCredential) {
+        WebCredential response = webCredential.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getWebSite());
+        LOGGER.debug("New credential was created by the user, Credential: {}",response);
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("")
-    void deleteAllWebCredential() {
+   /* @DeleteMapping("/{credentialId}")
+    void deleteCredential(@PathVariable(value = "credentialId",required = true) UUID credentialId) {
         webCredential.deleteAll();
-    }
+    }*/
 
     /**
     @GetMapping("/web-site/{webSite}")

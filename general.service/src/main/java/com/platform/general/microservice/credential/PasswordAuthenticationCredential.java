@@ -1,6 +1,6 @@
 package com.platform.general.microservice.credential;
 
-import com.platform.general.microservice.web.credential.BasicPasswordValidator;
+import com.platform.general.microservice.web.credential.validators.BasicPasswordValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

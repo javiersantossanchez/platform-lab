@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class WebCredentialImpl implements WebCredentialService {
@@ -19,8 +20,17 @@ public class WebCredentialImpl implements WebCredentialService {
     WebCredentialDeleter deleter;
 
     @Override
-    public void createNewWebCredential(){
-        creator.create("","");
+    public WebCredential createNewWebCredential(String password, String userName, String webSite){
+        return creator.create(password, userName, webSite);
+    }
+
+    /**
+     * @param id 
+     * @return
+     */
+    @Override
+    public WebCredential findCredential(UUID id) {
+        return fetcher.findById(id);
     }
 
     @Override
@@ -29,7 +39,7 @@ public class WebCredentialImpl implements WebCredentialService {
     }
 
     @Override
-    public void deleteAll(){
-        deleter.deleteAll();
+    public void deleteByID(UUID id){
+        deleter.deleteById(id);
     }
 }

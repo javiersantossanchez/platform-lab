@@ -15,4 +15,4 @@ COPY --from=builder application/. ./
 EXPOSE 3500
 RUN chown -R node /service
 USER node
-ENTRYPOINT ["node", "index.js"]
+ENTRYPOINT ["node", "app.js"]
