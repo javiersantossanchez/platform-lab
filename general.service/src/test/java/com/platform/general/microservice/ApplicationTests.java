@@ -3,9 +3,13 @@ package com.platform.general.microservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
+import com.platform.general.microservice.web.credential.adapters.web.ErrorResponse;
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +33,55 @@ class ApplicationTests {
 	private ObjectMapper objectMapper;
 
 	private final Faker faker = new Faker();
+
+	@ParameterizedTest
+	@NullSource
+	@EmptySource
+	void createCredentialWhenEmptyPassword(String password) throws Exception {
+		WebCredentialParam body = new WebCredentialParam();
+		body.setPassword(password);
+		body.setUserName(faker.name().username());
+		body.setWebSite(faker.internet().domainName());
+
+		mockMvc.perform(
+				post("/web-credentials")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(body))
+		).andExpect(status().is(400));
+	}
+
+	@ParameterizedTest
+	@NullSource
+	@EmptySource
+	void createCredentialWhenEmptyUserName(String userName) throws Exception {
+		WebCredentialParam body = new WebCredentialParam();
+		body.setPassword("asdQSASAed2");
+		body.setUserName(userName);
+		body.setWebSite(faker.internet().domainName());
+
+		mockMvc.perform(
+				post("/web-credentials")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(body))
+		).andExpect(status().is(400));
+	}
+
+	@ParameterizedTest
+	@NullSource
+	@EmptySource
+	void createCredentialWhenEmptyWebSite(String webSite) throws Exception {
+		WebCredentialParam body = new WebCredentialParam();
+		body.setPassword("asdQSASAed2");
+		body.setUserName(faker.name().username());
+		body.setWebSite(webSite);
+
+		mockMvc.perform(
+				post("/web-credentials")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(body))
+		).andExpect(status().is(400));
+	}
+
 
 	//@Test
 	void insertMultiplesCredentialsAndSearchAll() throws Exception {

@@ -28,4 +28,9 @@ public class IllegalArgumentException extends RuntimeException {
     public Validation getValidationFailed() {
         return validationFailed;
     }
+
+    public String getErrorMessage(){
+        return String.format("The value for %s should be %s", this.argument,this.validationFailed );
+    }
+
 }
