@@ -4,6 +4,7 @@ import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
@@ -12,12 +13,13 @@ public class WebCredentialInMemoryRepository implements WebCredentialRepository 
     public static List<WebCredential> webCredentialList = new ArrayList<>();
 
     @Override
-    public WebCredential save(String password, String userName, String webSite) {
+    public WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate) {
         UUID id = UUID.randomUUID();
         WebCredential newCredential = new WebCredential();
         newCredential.setPassword(password);
         newCredential.setUserName(userName);
         newCredential.setWebSite(webSite);
+        newCredential.setCreationDate(creationDate);
         newCredential.setId(id);
         webCredentialList.add(newCredential);
         return newCredential;

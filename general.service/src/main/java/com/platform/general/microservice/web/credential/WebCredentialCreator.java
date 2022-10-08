@@ -4,6 +4,7 @@ package com.platform.general.microservice.web.credential;
 import com.platform.general.microservice.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import com.platform.general.microservice.web.credential.utils.DateManager;
 import com.platform.general.microservice.web.credential.validators.PasswordValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebCredentialCreator {
 
-    private WebCredentialRepository repository;
+    private final WebCredentialRepository repository;
 
-    private PasswordValidator validator;
+    private final PasswordValidator validator;
+
+    private final DateManager dateManager;
 
     @Autowired
-    public WebCredentialCreator(WebCredentialRepository repository, PasswordValidator validator) {
+    public WebCredentialCreator(WebCredentialRepository repository, PasswordValidator validator, DateManager dateManager) {
         this.repository = repository;
         this.validator = validator;
+        this.dateManager = dateManager;
     }
 
     public WebCredential create(String password, String userName, String webSite) {
@@ -36,6 +40,6 @@ public class WebCredentialCreator {
             throw new InvalidPasswordException();
         }
 
-        return repository.save(password, userName, webSite);
+        return repository.save(password, userName, webSite,dateManager.getCurrentLocalDate());
     }
 }
