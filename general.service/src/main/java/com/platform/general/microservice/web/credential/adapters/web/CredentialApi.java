@@ -36,16 +36,16 @@ public class CredentialApi {
     }
 
     @PostMapping("")
-    ResponseEntity<WebCredential> createNewCredential(@RequestBody WebCredentialParam newCredential) {
+    ResponseEntity<WebCredential> create(@RequestBody WebCredentialParam newCredential) {
         WebCredential response = webCredential.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getWebSite());
         LOGGER.debug("New credential was created by the user, Credential: {}",response);
         return ResponseEntity.ok(response);
     }
 
-   /* @DeleteMapping("/{credentialId}")
+    @DeleteMapping("/{credentialId}")
     void deleteCredential(@PathVariable(value = "credentialId",required = true) UUID credentialId) {
-        webCredential.deleteAll();
-    }*/
+        webCredential.deleteByID(credentialId);
+    }
 
     /**
     @GetMapping("/web-site/{webSite}")
