@@ -3,7 +3,6 @@ package com.platform.general.microservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
-import com.platform.general.microservice.web.credential.adapters.web.ErrorResponse;
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

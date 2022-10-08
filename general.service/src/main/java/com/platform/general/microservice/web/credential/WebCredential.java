@@ -15,7 +15,5 @@ public class WebCredential {
 
     LocalDateTime creationDate;
 
-    LocalDateTime LastUpdateDate;
-
     UUID id;
 }
