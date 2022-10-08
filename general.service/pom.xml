@@ -8,10 +8,10 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>general.service</artifactId>
+	<artifactId>credentials.manager.service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>general.microservice</name>
-	<description>The general micro-service</description>
+	<name>credentials.manager.service</name>
+	<description>The Credentials Manager Micro-service</description>
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2021.0.1</spring-cloud.version>
