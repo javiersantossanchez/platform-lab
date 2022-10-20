@@ -6,5 +6,14 @@ services:
     hostname: general-service
     ports:
       - "8889:8889"
-    networks:
-      - microservice-platform
+    #networks:
+    #  - microservice-platform
+  credentials-audit-database:
+    image: mongo:6.0.2
+    container_name: credentials-audit-database
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: credentials-user
+      MONGO_INITDB_ROOT_PASSWORD: credentials-password
+    ports:
+      - "27017:27017"

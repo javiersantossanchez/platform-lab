@@ -1,6 +1,6 @@
 package com.platform.general.microservice.web.credential;
 
-import com.platform.general.microservice.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.ports.in.WebCredentialService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

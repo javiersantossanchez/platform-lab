@@ -21,6 +21,7 @@ public class CredentialApi {
     @Autowired
     WebCredentialService webCredential;
 
+
     @GetMapping("")
     ResponseEntity<List<WebCredential>> getAll(HttpServletRequest request) {
         List<WebCredential> credentialList = webCredential.findAll();

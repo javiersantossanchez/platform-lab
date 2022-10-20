@@ -1,6 +1,6 @@
 package com.platform.general.microservice.web.credential.adapters.web;
 
-import com.platform.general.microservice.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
