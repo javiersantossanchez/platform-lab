@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 public class AuditEvent {
 
     public enum AuditEventType{
-        SEARCH_WEB_CREDENTIAL
+        SEARCH_WEB_CREDENTIAL,
+        CREATE_CREDENTIAL
     }
 
     private AuditEventType type;

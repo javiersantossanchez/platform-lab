@@ -12,14 +12,23 @@ import java.util.UUID;
 @Service
 public class WebCredentialImpl implements WebCredentialService {
 
-    @Autowired
-    WebCredentialCreator creator;
+    public WebCredentialCreator creator;
+
+    public WebCredentialFetcher fetcher;
+
+
+    public WebCredentialDeleter deleter;
+
+
+    public AuditEventRegister eventRegister;
 
     @Autowired
-    WebCredentialFetcher fetcher;
-
-    @Autowired
-    WebCredentialDeleter deleter;
+    public WebCredentialImpl(WebCredentialCreator creator, WebCredentialFetcher fetcher, WebCredentialDeleter deleter, AuditEventRegister eventRegister) {
+        this.creator = creator;
+        this.fetcher = fetcher;
+        this.deleter = deleter;
+        this.eventRegister = eventRegister;
+    }
 
     @Override
     public WebCredential createNewWebCredential(String password, String userName, String webSite){
@@ -32,6 +41,7 @@ public class WebCredentialImpl implements WebCredentialService {
         if(StringUtils.isBlank(webSite)){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.WEB_SITE, IllegalArgumentException.Validation.NOT_EMPTY);
         }
+        eventRegister.register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
         return creator.create(password, userName, webSite);
     }
 

@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 public class Events {
 
     enum EventType{
-        SEARCH_WEB_CREDENTIAL
+        SEARCH_WEB_CREDENTIAL,
+        CREATE_CREDENTIAL
     }
 
     @Id

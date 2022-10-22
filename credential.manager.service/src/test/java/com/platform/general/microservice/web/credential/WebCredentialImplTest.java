@@ -32,6 +32,9 @@ public class WebCredentialImplTest {
     @Mock
     WebCredentialDeleter deleter;
 
+    @Mock
+    AuditEventRegister auditEventRegister;
+
     @Test
     public void createNewCredentialWhenOK(){
 
@@ -41,6 +44,7 @@ public class WebCredentialImplTest {
         newCredential.setWebSite(faker.internet().domainName());
         newCredential.setId(UUID.randomUUID());
         Mockito.doReturn(newCredential).when(creator).create(newCredential.getPassword(),newCredential.getUserName(),newCredential.getWebSite());
+        Mockito.doReturn(AuditEvent.builder().build()).when(auditEventRegister).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
 
         WebCredential credentialCreated = target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());
         Assertions.assertEquals(newCredential.getPassword(),credentialCreated.getPassword());
@@ -49,6 +53,7 @@ public class WebCredentialImplTest {
         Assertions.assertNotNull(credentialCreated.getId());
 
         Mockito.verify(creator,Mockito.times(1)).create(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());
+        Mockito.verify(auditEventRegister,Mockito.times(1)).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
     }
 
     @ParameterizedTest
