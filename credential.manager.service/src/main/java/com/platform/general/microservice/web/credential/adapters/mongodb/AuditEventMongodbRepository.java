@@ -30,9 +30,10 @@ public class AuditEventMongodbRepository implements AuditEventRepository {
         }
         Events eventDb = Events.builder()
                 .eventDate(dateManager.getCurrentLocalDate())
-                .eventType(Events.EventType.valueOf(type.name()))
+                .eventType(type)
                 .build();
         try {
+            //TODO: Review how the data is stored, there is a conversion and is no storage in UTC. You can review https://chamindu.dev/posts/localdatetime-spring-mongodb/   and https://www.baeldung.com/spring-data-mongodb-zoneddatetime
             eventDb = repo.save(eventDb);
         }catch (Exception exception){
             throw new AuditEventRegistrationException(exception);

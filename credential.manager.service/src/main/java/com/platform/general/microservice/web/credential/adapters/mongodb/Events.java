@@ -1,5 +1,6 @@
 package com.platform.general.microservice.web.credential.adapters.mongodb;
 
+import com.platform.general.microservice.web.credential.AuditEvent;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -12,17 +13,12 @@ import java.time.LocalDateTime;
 @Builder
 public class Events {
 
-    enum EventType{
-        SEARCH_WEB_CREDENTIAL,
-        CREATE_CREDENTIAL
-    }
-
     @Id
     private String id;
 
     private String event;
 
-    private EventType eventType;
+    private AuditEvent.AuditEventType eventType;
 
     private LocalDateTime eventDate;
 }

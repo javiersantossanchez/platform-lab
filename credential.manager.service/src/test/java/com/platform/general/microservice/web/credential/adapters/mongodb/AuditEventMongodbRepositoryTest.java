@@ -48,13 +48,13 @@ public class AuditEventMongodbRepositoryTest {
         Events dbEvent = Events
                 .builder()
                 .id(faker.internet().uuid())
-                .eventType(Events.EventType.SEARCH_WEB_CREDENTIAL)
+                .eventType(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL)
                 .eventDate(dateManager.getCurrentLocalDate())
                 .build();
         Mockito.doReturn(dbEvent).when(repo).save(Mockito.any(Events.class));
         AuditEvent auditEvent = target.registerAuditEvent(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL);
         Assertions.assertEquals(dbEvent.getId(),auditEvent.getId());
-        Assertions.assertEquals(dbEvent.getEventType().name(),auditEvent.getType().name());
+        Assertions.assertEquals(dbEvent.getEventType(),auditEvent.getType());
         Assertions.assertNotNull(auditEvent.getEventDate());
     }
 

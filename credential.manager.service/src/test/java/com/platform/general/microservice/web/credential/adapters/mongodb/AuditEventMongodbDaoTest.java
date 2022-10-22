@@ -1,6 +1,7 @@
 package com.platform.general.microservice.web.credential.adapters.mongodb;
 
 import com.github.javafaker.Faker;
+import com.platform.general.microservice.web.credential.AuditEvent;
 import com.platform.general.microservice.web.credential.utils.DateManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class AuditEventMongodbDaoTest {
     void saveWhenOK(){
         Events eventExpected = Events.builder()
                 .eventDate(dateManager.getCurrentLocalDate())
-                .eventType(Events.EventType.SEARCH_WEB_CREDENTIAL)
+                .eventType(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL)
                 .id(faker.number().toString())
                 .build();
         repository.save(eventExpected);
