@@ -40,7 +40,7 @@ public class AuditEventMongodbDaoTest {
     void saveWhenOK(){
         Events eventExpected = Events.builder()
                 .eventDate(dateManager.getCurrentLocalDate())
-                .eventType(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL)
+                .eventType(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL  )
                 .id(faker.number().toString())
                 .build();
         repository.save(eventExpected);
