@@ -54,7 +54,8 @@ https://www.krakend.io/docs/telemetry/extended-metrics/
 https://www.krakend.io/docs/telemetry/influxdb-native/
 
 
-
+https://www.baeldung.com/spring-security-oauth-jwt
+https://www.baeldung.com/spring-security-oauth-jwt#:~:text=The%20jwk%2Dset%2Duri%20property,as%20an%20added%20security%20measure.
 https://medium.com/devops-dudes/securing-spring-boot-rest-apis-with-keycloak-1d760b2004e
 https://www.helikube.de/keycloak-18-export-and-import-feature/
 Passowrd for user dev.user1 , dev.user1.password

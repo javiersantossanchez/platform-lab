@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @ExtendWith(MockitoExtension.class)
 public class WebCredentialImplTest {
@@ -44,7 +45,7 @@ public class WebCredentialImplTest {
         newCredential.setWebSite(faker.internet().domainName());
         newCredential.setId(UUID.randomUUID());
         Mockito.doReturn(newCredential).when(creator).create(newCredential.getPassword(),newCredential.getUserName(),newCredential.getWebSite());
-        Mockito.doReturn(AuditEvent.builder().build()).when(auditEventRegister).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
+        Mockito.doReturn(CompletableFuture.completedFuture(AuditEvent.builder().build())).when(auditEventRegister).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
 
         WebCredential credentialCreated = target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getWebSite());
         Assertions.assertEquals(newCredential.getPassword(),credentialCreated.getPassword());
