@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.concurrent.ExecutionException;
+
 
 @ExtendWith(MockitoExtension.class)
 public class AuditEventRegisterTest {
@@ -28,7 +30,7 @@ public class AuditEventRegisterTest {
     private DateManager dateManager = new DateManager();
 
     @Test()
-    public void createWhenOK(){
+    public void createWhenOK() throws ExecutionException, InterruptedException {
 
         AuditEvent auditEventExpected = AuditEvent.builder()
                 .eventDate(dateManager.getCurrentLocalDate())
@@ -37,7 +39,7 @@ public class AuditEventRegisterTest {
                 .build();
 
         Mockito.doReturn(auditEventExpected).when(auditEventRepository).registerAuditEvent(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL);
-        AuditEvent auditEventResult = target.register(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL);
+        AuditEvent auditEventResult = target.register(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL).get();
         Assertions.assertEquals(auditEventExpected,auditEventResult);
     }
 

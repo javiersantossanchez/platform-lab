@@ -1,16 +1,23 @@
 package com.platform.general.microservice.web.credential.adapters.mongodb;
 
 import com.platform.general.microservice.web.credential.AuditEvent;
+import com.platform.general.microservice.web.credential.AuditEventRegister;
 import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
 import com.platform.general.microservice.web.credential.exceptions.IllegalAuditEventValueException;
 import com.platform.general.microservice.web.credential.ports.out.AuditEventRepository;
 import com.platform.general.microservice.web.credential.utils.DateManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
 public class AuditEventMongodbRepository implements AuditEventRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditEventMongodbRepository.class);
 
     private AuditEventMongodbDao repo;
 
@@ -24,7 +31,9 @@ public class AuditEventMongodbRepository implements AuditEventRepository {
 
 
     @Override
+    @Retryable(value = { AuditEventRegistrationException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public AuditEvent registerAuditEvent(AuditEvent.AuditEventType type) {
+        LOGGER.debug("Storing Audit event into mongodb");
         if(type == null){
             throw new IllegalAuditEventValueException(IllegalAuditEventValueException.Argument.TYPE,IllegalAuditEventValueException.Validation.NOT_EMPTY);
         }
@@ -37,6 +46,8 @@ public class AuditEventMongodbRepository implements AuditEventRepository {
             eventDb = repo.save(eventDb);
         }catch (Exception exception){
             throw new AuditEventRegistrationException(exception);
+        }catch (Throwable t){
+
         }
         return AuditEvent.builder()
                 .eventDate(eventDb.getEventDate())

@@ -5,13 +5,62 @@ services:
     container_name: credentials-audit-database
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo-user-admin
-      MONGO_INITDB_ROOT_PASSWORD: mongo-password-admin
-      MONGO_CREDENTIAL_SERVICE_USERNAME: mongo-user-credential-service
-      MONGO_CREDENTIAL_SERVICE_PASSWORD: mongo-password-credential-service
-      MONGO_CREDENTIAL_SERVICE_DB: mongo-db-credential-service
+      MONGO_INITDB_ROOT_USERNAME: mongo-user-admin  # mongodb user admin
+      MONGO_INITDB_ROOT_PASSWORD: mongo-password-admin # mongodb password admin
+      MONGO_CREDENTIAL_SERVICE_USERNAME: mongo-user-credential-service # mongodb user for credential service
+      MONGO_CREDENTIAL_SERVICE_PASSWORD: mongo-password-credential-service # mongodb password for credential service
+      MONGO_CREDENTIAL_SERVICE_DB: mongo-db-credential-service # mongodb database for credential service
       MONGO_INITDB_DATABASE: mongo-db-credential-service
     ports:
       - "27017:27017"
     volumes:
       - ./mongodb/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+  keykloak-security:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keykloak-security
+    hostname: keykloak-security
+    #networks:
+    #  - microservice-platform
+    ports:
+      - "8087:8080"  # expose to host port 8403 use the 8403 por on host
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-db:5432/keycloak-db
+      KC_DB_USERNAME: keycloak-user
+      KC_DB_PASSWORD: keycloak-password
+      #KC_HOSTNAME_STRICT: false
+      #KC_EDGE: proxy
+      #DB_VENDOR: postgres
+      #DB_ADDR: postgres-db
+      #DB_DATABASE: keycloak-db
+      #DB_USER: keycloak-user
+      #DB_SCHEMA: public
+      #DB_PASSWORD: keycloak-password
+      KEYCLOAK_LOGLEVEL: DEBUG
+      ROOT_LOGLEVEL: DEBUG
+    command:
+      - start-dev
+      - --import-realm
+      #- -v export --realm Platform-lab --users realm_file --dir /opt/keycloak/data/import/
+    volumes:
+      - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json
+  postgres-db:
+    image: postgres:14.5
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: admin-user
+      POSTGRES_PASSWORD: admin-password
+      POSTGRES_DB: admin-database
+      KEYCLOAK_USER: keycloak-user
+      KEYCLOAK_PASSWORD: keycloak-password
+      KEYCLOAK_DB: keycloak-db
+      #PGDATA: /data/postgres
+    volumes:
+      - ./postgresql/initdb.d:/docker-entrypoint-initdb.d/
+     # - ./postgresql/data:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+        #docker exec keykloak-security kc export --realm Platform-lab --users realm_file --dir /opt/keycloak/data/import

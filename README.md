@@ -54,11 +54,18 @@ https://www.krakend.io/docs/telemetry/extended-metrics/
 https://www.krakend.io/docs/telemetry/influxdb-native/
 
 
-curl -L -X POST 'http://localhost:8086/realms/microservice.plaform/protocol/openid-connect/token' \
+
+https://medium.com/devops-dudes/securing-spring-boot-rest-apis-with-keycloak-1d760b2004e
+https://www.helikube.de/keycloak-18-export-and-import-feature/
+Passowrd for user dev.user1 , dev.user1.password
+
+
+
+curl -L -X POST 'http://localhost:8087/realms/platform-lab/protocol/openid-connect/token' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'client_id=microservice.plaform' \
+--data-urlencode 'client_id=credential.manager.service' \
 --data-urlencode 'grant_type=password' \
---data-urlencode 'client_secret=B5wHowjVPr8maU5cEFTYMXApaT8NBI5s' \
+--data-urlencode 'client_secret=kZ7zHCCcqRR54ABJMeaJKd1LFzsZYWDP' \
 --data-urlencode 'scope=openid' \
---data-urlencode 'username=javier' \
---data-urlencode 'password=1234'
+--data-urlencode 'username=dev.user1' \
+--data-urlencode 'password=dev.user1.password'
