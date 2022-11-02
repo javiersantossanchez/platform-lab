@@ -27,9 +27,10 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres-db:5432/keycloak-db
-      KC_DB_USERNAME: keycloak-user
-      KC_DB_PASSWORD: keycloak-password
+      KC_DB_URL: jdbc:postgresql://postgres-db:5432/credential_platform_db?currentSchema=security_provider_schema # using a custom schema required to add the currentSchema param
+      KC_DB_USERNAME: security_provider_user
+      KC_DB_PASSWORD: security_provider_password
+      KC_DB_SCHEMA: security_provider_schema
       #KC_HOSTNAME_STRICT: false
       #KC_EDGE: proxy
       #DB_VENDOR: postgres
@@ -46,16 +47,27 @@ services:
       #- -v export --realm Platform-lab --users realm_file --dir /opt/keycloak/data/import/
     volumes:
       - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json
+    depends_on:
+      - postgres-db
   postgres-db:
     image: postgres:14.5
     container_name: postgres-db
     environment:
-      POSTGRES_USER: admin-user
-      POSTGRES_PASSWORD: admin-password
-      POSTGRES_DB: admin-database
-      KEYCLOAK_USER: keycloak-user
-      KEYCLOAK_PASSWORD: keycloak-password
-      KEYCLOAK_DB: keycloak-db
+      # database Admin credentials
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: admin_password
+      POSTGRES_DB: admin_database
+      #Main Database
+      CREDENTIAL_PLATFORM_DB: credential_platform_db
+      #Credential microservice
+      CREDENTIAL_MICROSERVICE_USER: credential_microservice_user
+      CREDENTIAL_MICROSERVICE_PASSWORD: credential_microservice_password
+      CREDENTIAL_MICROSERVICE_SCHEMA: credential_microservice_schema
+      # Security provider credentials
+      SECURITY_PROVIDER_USER: security_provider_user
+      SECURITY_PROVIDER_PASSWORD: security_provider_password
+      SECURITY_PROVIDER_SCHEMA: security_provider_schema
+
       #PGDATA: /data/postgres
     volumes:
       - ./postgresql/initdb.d:/docker-entrypoint-initdb.d/
