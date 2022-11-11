@@ -1,5 +1,6 @@
 package com.platform.general.microservice.web.credential;
 
+import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,7 +13,7 @@ import java.util.UUID;
 public class WebCredentialDeleter {
 
     @Autowired
-    @Qualifier("postgresql")
+    @Qualifier(ConstantaAAAA.QUALIFIER_WEB_CREDENTIAL_REPOSITORY)
     WebCredentialRepository repository;
 
     public void deleteById(UUID id) {

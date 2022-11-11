@@ -1,6 +1,7 @@
 package com.platform.general.microservice.web.credential;
 
 
+import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
@@ -22,7 +23,7 @@ public class WebCredentialCreator {
     private final DateManager dateManager;
 
     @Autowired
-    public WebCredentialCreator(@Qualifier("postgresql") WebCredentialRepository repository, PasswordValidator validator, DateManager dateManager) {
+    public WebCredentialCreator(@Qualifier(ConstantaAAAA.QUALIFIER_WEB_CREDENTIAL_REPOSITORY) WebCredentialRepository repository, PasswordValidator validator, DateManager dateManager) {
         this.repository = repository;
         this.validator = validator;
         this.dateManager = dateManager;

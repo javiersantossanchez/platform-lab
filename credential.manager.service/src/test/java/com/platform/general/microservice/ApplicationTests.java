@@ -22,6 +22,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -47,10 +48,18 @@ class ApplicationTests {
 	@DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+
+		registry.add("spring.datasource.url", postgreSQLDBContainer::getJdbcUrl);
+		registry.add("spring.datasource.username", postgreSQLDBContainer::getUsername);
+		registry.add("spring.datasource.password", postgreSQLDBContainer::getPassword);
+		registry.add("spring.datasource.driver-class-name", postgreSQLDBContainer::getDriverClassName);
 	}
 
 	@Container
 	static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:6.0.2");
+
+	@Container
+	static PostgreSQLContainer postgreSQLDBContainer = new PostgreSQLContainer("postgres:14.5");
 
 	private final Faker faker = new Faker();
 

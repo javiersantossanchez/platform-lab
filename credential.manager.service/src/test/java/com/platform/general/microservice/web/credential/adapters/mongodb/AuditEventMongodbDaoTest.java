@@ -6,18 +6,23 @@ import com.platform.general.microservice.web.credential.utils.DateManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
-@ComponentScan({"com.platform.general.microservice.web.credential.utils"})
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
+@SpringBootTest
+//@ComponentScan({"com.platform.general.microservice.web.credential.utils"})
 public class AuditEventMongodbDaoTest {
 
     private final Faker faker = new Faker();
@@ -25,12 +30,20 @@ public class AuditEventMongodbDaoTest {
     @Autowired
     private AuditEventMongodbDao repository;
 
+    @Container
+    static PostgreSQLContainer postgreSQLDBContainer = new PostgreSQLContainer("postgres:14.5");
+
     @Autowired
     private DateManager dateManager;
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+
+        registry.add("spring.datasource.url", postgreSQLDBContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLDBContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLDBContainer::getPassword);
+        registry.add("spring.datasource.driver-class-name", postgreSQLDBContainer::getDriverClassName);
     }
 
     @Container

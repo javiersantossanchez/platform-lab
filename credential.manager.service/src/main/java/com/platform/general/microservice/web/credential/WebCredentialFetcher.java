@@ -1,5 +1,6 @@
 package com.platform.general.microservice.web.credential;
 
+import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,7 +15,7 @@ public class WebCredentialFetcher   {
     private WebCredentialRepository repository;
 
     @Autowired
-    public WebCredentialFetcher(@Qualifier("postgresql") WebCredentialRepository repository) {
+    public WebCredentialFetcher(@Qualifier(ConstantaAAAA.QUALIFIER_WEB_CREDENTIAL_REPOSITORY) WebCredentialRepository repository) {
         this.repository = repository;
     }
 
