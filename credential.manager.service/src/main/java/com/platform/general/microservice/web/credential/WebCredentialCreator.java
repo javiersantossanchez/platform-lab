@@ -8,10 +8,12 @@ import com.platform.general.microservice.web.credential.utils.DateManager;
 import com.platform.general.microservice.web.credential.validators.PasswordValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WebCredentialCreator {
+
 
     private final WebCredentialRepository repository;
 
@@ -20,7 +22,7 @@ public class WebCredentialCreator {
     private final DateManager dateManager;
 
     @Autowired
-    public WebCredentialCreator(WebCredentialRepository repository, PasswordValidator validator, DateManager dateManager) {
+    public WebCredentialCreator(@Qualifier("postgresql") WebCredentialRepository repository, PasswordValidator validator, DateManager dateManager) {
         this.repository = repository;
         this.validator = validator;
         this.dateManager = dateManager;

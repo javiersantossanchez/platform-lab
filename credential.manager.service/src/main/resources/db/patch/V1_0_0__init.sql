@@ -1,10 +1,10 @@
 
-CREATE TABLE IF NOT EXISTS password_credential (
-  password_credential uuid,
+CREATE TABLE IF NOT EXISTS user_password_credential (
+  user_password_credential_id uuid,
   password VARCHAR(50) NOT NULL,
   user_name VARCHAR(100) NOT NULL,
   credential_name VARCHAR(100) NOT NULL,
-  PRIMARY KEY ( password_credential ),
+  PRIMARY KEY ( user_password_credential_id ),
   CONSTRAINT credential_name_unique UNIQUE (credential_name)
 );
 

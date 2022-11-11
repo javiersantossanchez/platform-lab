@@ -62,6 +62,9 @@ Passowrd for user dev.user1 , dev.user1.password
 
 
 
+https://refactorizando.com/test-integracion-spring-boot-testcontainers/
+
+
 curl -L -X POST 'http://localhost:8087/realms/platform-lab/protocol/openid-connect/token' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'client_id=credential.manager.service' \

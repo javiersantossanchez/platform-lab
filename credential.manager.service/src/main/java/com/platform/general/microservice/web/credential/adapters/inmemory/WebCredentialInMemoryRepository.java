@@ -2,12 +2,12 @@ package com.platform.general.microservice.web.credential.adapters.inmemory;
 
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Repository
+@Component("in-memory")
 public class WebCredentialInMemoryRepository implements WebCredentialRepository {
 
     public static List<WebCredential> webCredentialList = new ArrayList<>();
