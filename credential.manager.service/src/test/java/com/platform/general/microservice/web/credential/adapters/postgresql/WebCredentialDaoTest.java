@@ -3,23 +3,34 @@ package com.platform.general.microservice.web.credential.adapters.postgresql;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.AuditEvent;
 import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 
 @Testcontainers
-//@DataJpaTest
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
+@ActiveProfiles(value = "test")
 public class WebCredentialDaoTest  {
 
     private final Faker faker = new Faker();
@@ -45,8 +56,9 @@ public class WebCredentialDaoTest  {
         String username = faker.name().username();
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
+        LocalDateTime creationDate = LocalDateTime.now();
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName,creationDate);
         repository.save(entity);
         WebCredentialEntity result = repository.findById(entity.getId()).orElse(null);
         Assertions.assertNotNull(result);
@@ -118,5 +130,18 @@ public class WebCredentialDaoTest  {
         WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
+
+
+
+    @Test
+    public void findCredentialByIDWithNull(){
+        Assertions.assertThrows(InvalidDataAccessApiUsageException.class,()->{repository.findById(null);});
+    }
+
+    @Test
+    public void deleteCredentialWhenIdDoesNotExist(){
+        Assertions.assertThrows(EmptyResultDataAccessException.class,()->{repository.deleteById(UUID.randomUUID());});
+    }
+
 
 }

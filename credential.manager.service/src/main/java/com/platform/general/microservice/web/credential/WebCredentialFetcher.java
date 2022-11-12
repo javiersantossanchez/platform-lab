@@ -18,10 +18,7 @@ public class WebCredentialFetcher   {
     public WebCredentialFetcher(@Qualifier(ConstantaAAAA.QUALIFIER_WEB_CREDENTIAL_REPOSITORY) WebCredentialRepository repository) {
         this.repository = repository;
     }
-
-    public List<WebCredential> fetchAll() {
-        return repository.findAll();
-    }
+    
 
     public WebCredential findById(UUID id){
         return repository.findById(id);

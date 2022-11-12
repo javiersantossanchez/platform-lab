@@ -20,7 +20,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class,ManagementWebSecurityAutoConfiguration.class})
 @SpringBootTest
 //@ComponentScan({"com.platform.general.microservice.web.credential.utils"})
 public class AuditEventMongodbDaoTest {

@@ -25,11 +25,6 @@ public class WebCredentialInMemoryRepository implements WebCredentialRepository 
         return newCredential;
     }
 
-    @Override
-    public List<WebCredential> findAll() {
-        return webCredentialList;
-    }
-
     /**
      * @return 
      */

@@ -61,10 +61,6 @@ public class WebCredentialImpl implements WebCredentialService {
         return fetcher.findById(id);
     }
 
-    @Override
-    public List<WebCredential> findAll(){
-        return fetcher.fetchAll();
-    }
 
     @Override
     public void deleteByID(UUID id){

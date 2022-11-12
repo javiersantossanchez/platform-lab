@@ -5,7 +5,9 @@ public class IllegalArgumentException extends RuntimeException {
     public enum Argument {
         USER_NAME,
         PASSWORD,
-        WEB_SITE
+        WEB_SITE,
+
+        ID
     }
 
     public enum Validation {

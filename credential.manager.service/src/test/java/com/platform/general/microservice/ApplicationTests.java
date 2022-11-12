@@ -111,7 +111,7 @@ class ApplicationTests {
 		).andExpect(status().is(400));
 	}
 
-
+/**
 	@Test
 	void insertMultiplesCredentialsAndSearchAll() throws Exception {
 		WebCredentialParam body1 = new WebCredentialParam();
@@ -218,7 +218,7 @@ class ApplicationTests {
 						&& current.getWebSite().equals(body3.getWebSite())
 		));
 	}
-
+**/
 	@Test
 	void insertMultiplesCredentialsAndFindOneById() throws Exception {
 		WebCredentialParam body1 = new WebCredentialParam();

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS user_password_credential (
   password VARCHAR(50) NOT NULL,
   user_name VARCHAR(100) NOT NULL,
   credential_name VARCHAR(100) NOT NULL,
+  creation_time timestamp without time zone NOT NULL,
   PRIMARY KEY ( user_password_credential_id ),
   CONSTRAINT credential_name_unique UNIQUE (credential_name)
 );

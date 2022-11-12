@@ -1,6 +1,8 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 import com.github.javafaker.Faker;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialDeleteException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,18 +12,25 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.UUID;
+
 @Testcontainers
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
 public class WebCredentialPostgresqlRepositoryComponentTest {
 
     private final Faker faker = new Faker();
@@ -44,7 +53,6 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
     }
 
 
-
     @Test()
     public void createOneCredentialWithRetryOnError(){
         String userName = faker.name().username();
@@ -59,6 +67,25 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
     }
 
 
+    @Test()
+    public void deleteOneCredentialWithRetryOnDatabaseError(){
+        UUID id = UUID.randomUUID();
+        Mockito.doThrow(RuntimeException.class).when(repo).deleteById(id);
+
+        Assertions.assertThrows(WebCredentialDeleteException.class,()->target.deleteById(id));
+
+        Mockito.verify(repo,Mockito.times(3)).deleteById(id);
+    }
+
+    @Test()
+    public void deleteOneCredentialWithRetryOnNotFoundError(){
+        UUID id = UUID.randomUUID();
+        Mockito.doThrow(EmptyResultDataAccessException.class).when(repo).deleteById(id);
+
+        Assertions.assertThrows(WebCredentialNotFoundException.class,()->target.deleteById(id));
+
+        Mockito.verify(repo,Mockito.times(1)).deleteById(id);
+    }
 
 
 }

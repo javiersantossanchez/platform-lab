@@ -22,12 +22,12 @@ public class CredentialApi {
     WebCredentialService webCredential;
 
 
-    @GetMapping("")
+    /**@GetMapping("")
     ResponseEntity<List<WebCredential>> getAll(HttpServletRequest request) {
-        List<WebCredential> credentialList = webCredential.findAll();
-        LOGGER.debug("The user searching all the credentials {}",credentialList);
-        return ResponseEntity.ok(credentialList);
-    }
+        //List<WebCredential> credentialList = webCredential.findAll();
+        //LOGGER.debug("The user searching all the credentials {}",credentialList);
+        return ResponseEntity.ok();
+    }**/
 
     @GetMapping("/{credentialId}")
     ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId) {

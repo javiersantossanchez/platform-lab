@@ -1,10 +1,11 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 import com.platform.general.microservice.web.credential.WebCredential;
-import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
+import com.platform.general.microservice.web.credential.exceptions.*;
+import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -23,43 +24,70 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         this.dao = dao;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Retryable(value = { WebCredentialRegistrationException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public WebCredential save(String password, String userName, String credentialName, LocalDateTime creationDate) {
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,userName,credentialName);
+        WebCredentialEntity entity = new WebCredentialEntity(password,userName,credentialName,creationDate);
         WebCredentialEntity newEntity = null;
         try {
             newEntity = dao.save(entity);
-        }catch (Exception ex){
+        }catch (RuntimeException ex){
             throw new WebCredentialRegistrationException(ex);
         }
-        WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(newEntity.getPassword());
-        newCredential.setUserName(newEntity.getUserName());
-        //newCredential.setWebSite(credentialName);
-        //newCredential.setCreationDate(creationDate);
-        //newCredential.setId(id);
-        return newCredential;
-    }
-
-    @Override
-    public List<WebCredential> findAll() {
-        return null;
+        return buildWebCredential(newEntity);
     }
 
     /**
-     * @return 
+     * TODO: review the retry functionality
+     *
+     * {@inheritDoc}
      */
     @Override
     public WebCredential findById(UUID id) {
-        return null;
+        if(id == null){
+            throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
+        }
+        WebCredentialEntity newEntity = null;
+        try {
+            newEntity = dao.findById(id).orElse(null);
+        }catch (RuntimeException ex){
+            throw new WebCredentialSearchException(ex);
+        }
+        return buildWebCredential(newEntity);
     }
 
     /**
      * @param id
+     *
+     * @exception  WebCredentialNotFoundException - The id does not exist on the system
      */
     @Override
+    @Retryable(value = { WebCredentialDeleteException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public void deleteById(UUID id) {
+        if(id == null){
+            throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
+        }
+        try {
+            dao.deleteById(id);
+        }catch(EmptyResultDataAccessException ex){
+            throw new WebCredentialNotFoundException(ex);
+        }catch (RuntimeException ex){
+            throw new WebCredentialDeleteException(ex);
+        }
+    }
+
+    private WebCredential buildWebCredential(WebCredentialEntity entity){
+        if(entity == null){
+            return null;
+        }
+        WebCredential webCredential = new WebCredential();
+        webCredential.setPassword(entity.getPassword());
+        webCredential.setUserName(entity.getUserName());
+        webCredential.setCreationDate(entity.getCreationTime());
+        return webCredential;
     }
 }

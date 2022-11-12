@@ -25,13 +25,5 @@ public class WebCredentialFetcherTest {
     @Mock
     WebCredentialRepository repository;
 
-    @Test()
-    public void fetchAllWhenOK(){
-        List<WebCredential> expected = new ArrayList<>();
-        Mockito.doReturn(expected).when(repository).findAll();
-        List<WebCredential> result = target.fetchAll();
-        Mockito.verify(repository,Mockito.times(1)).findAll();
-        Assertions.assertEquals(expected,result);
-    }
 
 }

@@ -11,7 +11,5 @@ public interface WebCredentialService {
 
     WebCredential findCredential(UUID id);
 
-    List<WebCredential> findAll();
-
     void deleteByID(UUID id);
 }
