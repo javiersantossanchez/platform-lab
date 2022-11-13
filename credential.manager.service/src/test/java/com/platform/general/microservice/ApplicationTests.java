@@ -10,13 +10,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,17 +26,16 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Arrays;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class,ManagementWebSecurityAutoConfiguration.class})
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 @Testcontainers
-@ActiveProfiles(value = "test")
 class ApplicationTests {
 
 	@Autowired
@@ -44,6 +43,10 @@ class ApplicationTests {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@MockBean
+	@SuppressWarnings("unused")
+	private JwtDecoder jwtDecoder;
 
 	@DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry registry) {
@@ -76,6 +79,7 @@ class ApplicationTests {
 				post("/web-credentials")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
+						.with(jwt())
 		).andExpect(status().is(400));
 	}
 
@@ -92,6 +96,7 @@ class ApplicationTests {
 				post("/web-credentials")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
+						.with(jwt())
 		).andExpect(status().is(400));
 	}
 
@@ -108,6 +113,7 @@ class ApplicationTests {
 				post("/web-credentials")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
+						.with(jwt())
 		).andExpect(status().is(400));
 	}
 
@@ -230,6 +236,7 @@ class ApplicationTests {
 				post("/web-credentials")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body1))
+						.with(jwt())
 		).andExpect(status().isOk()).andReturn();
 		String response1 = credential1.getResponse().getContentAsString();
 		WebCredential pojo1 = objectMapper.readValue(response1, WebCredential.class);
@@ -244,6 +251,7 @@ class ApplicationTests {
 				post("/web-credentials")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body2))
+						.with(jwt())
 		).andExpect(status().isOk()).andReturn();
 
 
@@ -251,6 +259,7 @@ class ApplicationTests {
 		MvcResult mvcResult = mockMvc.perform(
 						get("/web-credentials/"+pojo1.getId())
 								.contentType(MediaType.APPLICATION_JSON)
+								.with(jwt())
 				)
 				.andExpect(status().isOk())
 				.andReturn();
