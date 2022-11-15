@@ -11,7 +11,9 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
@@ -20,15 +22,18 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class,ManagementWebSecurityAutoConfiguration.class})
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 @SpringBootTest
-//@ComponentScan({"com.platform.general.microservice.web.credential.utils"})
 public class AuditEventMongodbDaoTest {
 
     private final Faker faker = new Faker();
 
     @Autowired
     private AuditEventMongodbDao repository;
+
+    @MockBean
+    @SuppressWarnings("unused")
+    private JwtDecoder jwtDecoder;
 
     @Container
     static PostgreSQLContainer postgreSQLDBContainer = new PostgreSQLContainer("postgres:14.5");

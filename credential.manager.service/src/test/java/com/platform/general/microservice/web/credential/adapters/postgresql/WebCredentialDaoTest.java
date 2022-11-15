@@ -12,9 +12,11 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,8 +31,7 @@ import java.util.UUID;
 @Testcontainers
 @SpringBootTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
-@ActiveProfiles(value = "test")
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 public class WebCredentialDaoTest  {
 
     private final Faker faker = new Faker();
@@ -48,6 +49,10 @@ public class WebCredentialDaoTest  {
         registry.add("spring.datasource.password", postgreSQLDBContainer::getPassword);
         registry.add("spring.datasource.driver-class-name", postgreSQLDBContainer::getDriverClassName);
     }
+
+    @MockBean
+    @SuppressWarnings("unused")
+    private JwtDecoder jwtDecoder;
 
 
     @Test

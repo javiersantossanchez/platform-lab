@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -30,7 +31,7 @@ import java.util.UUID;
 @Testcontainers
 @SpringBootTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
+@ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 public class WebCredentialPostgresqlRepositoryComponentTest {
 
     private final Faker faker = new Faker();
@@ -40,6 +41,10 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
 
     @MockBean
     private WebCredentialDao repo;
+
+    @MockBean
+    @SuppressWarnings("unused")
+    private JwtDecoder jwtDecoder;
 
     @Container
     static PostgreSQLContainer postgreSQLDBContainer = new PostgreSQLContainer("postgres:14.5");
