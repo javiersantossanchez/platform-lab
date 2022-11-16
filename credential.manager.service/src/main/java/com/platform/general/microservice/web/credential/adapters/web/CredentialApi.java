@@ -7,10 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -37,7 +38,7 @@ public class CredentialApi {
     }
 
     @PostMapping("")
-    ResponseEntity<WebCredential> create(@RequestBody WebCredentialParam newCredential) {
+    ResponseEntity<WebCredential> create(@RequestBody WebCredentialParam newCredential, Principal principal,@AuthenticationPrincipal Jwt jwt) {// principal and jwt are the paremeters required to review the user or authentication information
         WebCredential response = webCredential.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getWebSite());
         LOGGER.debug("New credential was created by the user, Credential: {}",response);
         return ResponseEntity.ok(response);
