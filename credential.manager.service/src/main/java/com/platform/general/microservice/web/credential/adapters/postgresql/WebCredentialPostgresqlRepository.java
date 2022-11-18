@@ -11,7 +11,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service("postgresql")
@@ -57,13 +56,16 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
         }
+        if(newEntity == null){
+            throw new WebCredentialNotFoundException();
+        }
         return buildWebCredential(newEntity);
     }
 
     /**
-     * @param id
+     * TODO: review the retry functionality
      *
-     * @exception  WebCredentialNotFoundException - The id does not exist on the system
+     * {@inheritDoc}
      */
     @Override
     @Retryable(value = { WebCredentialDeleteException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
@@ -88,6 +90,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         webCredential.setPassword(entity.getPassword());
         webCredential.setUserName(entity.getUserName());
         webCredential.setCreationDate(entity.getCreationTime());
+        webCredential.setId(entity.getId());
         return webCredential;
     }
 }

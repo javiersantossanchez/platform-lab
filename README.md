@@ -75,6 +75,9 @@ curl -L -X POST 'http://localhost:8087/realms/platform-lab/protocol/openid-conne
 --data-urlencode 'password=dev.user1.password'
 
 
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.testing
+
 https://docs.spring.io/spring-security/reference/servlet/test/mockmvc/oauth2.html
 https://rieckpil.de/guide-to-testing-spring-boot-applications-with-mockmvc/
 https://github.com/auth0-samples/auth0-spring-security5-api-sample/blob/master/01-Authorization-MVC/src/test/java/com/auth0/example/web/APIControllerTest.java

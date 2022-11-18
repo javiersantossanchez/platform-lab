@@ -32,7 +32,7 @@ public class CredentialApi {
     }**/
 
     @GetMapping("/{credentialId}")
-    ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId) {
+    ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
         WebCredential credential = webCredential.findCredential(credentialId);
         LOGGER.debug("The user search credential {}",credential);
         return ResponseEntity.ok(credential);

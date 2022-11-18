@@ -2,6 +2,7 @@ package com.platform.general.microservice.web.credential.ports.out;
 
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 
@@ -28,9 +29,16 @@ public interface WebCredentialRepository {
      *
      * @exception WebCredentialSearchException - A error its generated during the searching
      * @exception IllegalArgumentException - when @id has invalid value
+     * @exception WebCredentialNotFoundException - The id does not exist on the system
      * @return
      *
      */
     WebCredential findById(UUID id);
+
+    /**
+     * @param id
+     *
+     * @exception WebCredentialNotFoundException - The id does not exist on the system
+     */
     void deleteById(UUID id);
 }

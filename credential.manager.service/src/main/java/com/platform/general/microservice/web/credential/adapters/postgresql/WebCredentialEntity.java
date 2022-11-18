@@ -1,6 +1,8 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "user_password_credential")
 @Data
+@AllArgsConstructor
+@Builder
 public class WebCredentialEntity {
 
     @Id
