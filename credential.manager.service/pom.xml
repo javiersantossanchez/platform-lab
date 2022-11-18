@@ -224,6 +224,15 @@
 	<build>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+
+
+
+
 			<plugin> <!--Plugin to generate coverage report-->
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,15 +15,15 @@ public class WebCredentialImpl implements WebCredentialService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebCredentialImpl.class);
 
-    public WebCredentialCreator creator;
+    private WebCredentialCreator creator;
 
-    public WebCredentialFetcher fetcher;
-
-
-    public WebCredentialDeleter deleter;
+    private WebCredentialFetcher fetcher;
 
 
-    public AuditEventRegister eventRegister;
+    private WebCredentialDeleter deleter;
+
+
+    private AuditEventRegister eventRegister;
 
     @Autowired
     public WebCredentialImpl(WebCredentialCreator creator, WebCredentialFetcher fetcher, WebCredentialDeleter deleter, AuditEventRegister eventRegister) {

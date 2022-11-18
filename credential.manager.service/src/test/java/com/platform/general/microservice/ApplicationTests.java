@@ -81,6 +81,8 @@ class ApplicationTests {
 				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
 				.claim("scope", "openid profile email")
 				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
 				.build();
 
 
