@@ -1,9 +1,13 @@
-package com.platform.general.microservice;
+package com.platform.general.microservice.web.credential.adapters.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
+import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
+import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialEntity;
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
+import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +32,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 @Testcontainers
-class ApplicationTests {
+class CredentialApiTests {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -48,6 +55,9 @@ class ApplicationTests {
 	@MockBean
 	@SuppressWarnings("unused")
 	private JwtDecoder jwtDecoder;
+
+	@Autowired
+	private WebCredentialDao dao;
 
 	@DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry registry) {
@@ -66,6 +76,58 @@ class ApplicationTests {
 	static PostgreSQLContainer postgreSQLDBContainer = new PostgreSQLContainer("postgres:14.5");
 
 	private final Faker faker = new Faker();
+
+
+	@Test
+	void searchCredentialWhenDoesNotExist() throws Exception {
+		WebCredentialNotFoundException expectedResponse = new WebCredentialNotFoundException();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/web-credentials/"+ UUID.randomUUID())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt())
+		).andExpect(status().is4xxClientError()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+	}
+
+	@Test
+	void searchCredentialWithInvalidId() throws Exception {
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/web-credentials/invalid-UUID")
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt())
+		).andExpect(status().is4xxClientError()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertTrue(error.getErrorMessage().startsWith("Invalid value for "));
+	}
+
+	@Test
+	void searchCredentialWhenOk() throws Exception {
+		WebCredentialEntity entity = WebCredentialEntity.builder()
+										.credentialName(faker.company().name())
+										.userName(faker.name().username())
+										.password(faker.internet().password())
+										.creationTime(LocalDateTime.now())
+										.build();
+		entity = dao.save(entity);
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/web-credentials/"+entity.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt())
+		).andExpect(status().isOk()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		WebCredential credential = objectMapper.readValue(response, WebCredential.class);
+		Assertions.assertEquals(entity.getUserName(),credential.getUserName());
+		Assertions.assertEquals(entity.getUserName(),credential.getUserName());
+		Assertions.assertEquals(entity.getCreationTime(),credential.getCreationDate());
+		Assertions.assertEquals(entity.getId(),credential.getId());
+	}
+
 
 	@ParameterizedTest
 	@NullSource
