@@ -1,23 +1,18 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 import com.github.javafaker.Faker;
-import com.platform.general.microservice.web.credential.AuditEvent;
-import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -30,7 +25,6 @@ import java.util.UUID;
 
 @Testcontainers
 @SpringBootTest
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 public class WebCredentialDaoTest  {
 
@@ -136,6 +130,18 @@ public class WebCredentialDaoTest  {
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 
+    @Test
+    public void createOneCredentialWithUserNameRepeated(){
+        String username = faker.name().username();
+
+        WebCredentialEntity entity = new WebCredentialEntity(faker.internet().password(),username,faker.internet().domainName(),LocalDateTime.now());
+        repository.save(entity);
+        final WebCredentialEntity duplicatedEntity = new WebCredentialEntity(faker.internet().password(),username,faker.internet().domainName(),LocalDateTime.now());
+        Assertions.assertThrows(DataIntegrityViolationException.class,()->repository.save(duplicatedEntity));
+    }
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
 
     @Test

@@ -11,7 +11,8 @@ public class IllegalArgumentException extends RuntimeException {
     }
 
     public enum Validation {
-        NOT_EMPTY
+        NOT_EMPTY,
+        DUPLICATED
     }
 
     private Argument argument;

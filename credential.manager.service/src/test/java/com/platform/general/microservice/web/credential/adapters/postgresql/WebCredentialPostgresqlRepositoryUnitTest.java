@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,6 +65,28 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Assertions.assertEquals(entityCreated.getCreationTime(),result.getCreationDate());
 
         Assertions.assertEquals(entityCreated.getId(),result.getId());
+    }
+
+    @Test()
+    public void createOneCredentialWhenDuplicatedUserName(){
+        String userName = faker.name().username();
+        String credentialName = faker.internet().domainName();
+        String password = faker.internet().password();
+        LocalDateTime creationDate =  LocalDateTime.now();
+        WebCredentialEntity entity =  WebCredentialEntity
+                .builder()
+                .userName(userName)
+                .password(password)
+                .credentialName(credentialName)
+                .creationTime(creationDate)
+                .build();
+
+        SQLException sqlEx = new SQLException(faker.friends().quote(),"23505");
+        ConstraintViolationException cex = new ConstraintViolationException(faker.friends().quote(),sqlEx,"user_name_unique");
+        Mockito.doThrow(new DataIntegrityViolationException(faker.friends().quote(),cex)).when(repo).save(entity);
+
+        Assertions.assertThrows(IllegalArgumentException.class,()->target.save(password, userName, credentialName,creationDate));
+
     }
 
     @Test()

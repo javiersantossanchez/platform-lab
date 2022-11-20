@@ -4,7 +4,9 @@ import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -34,7 +36,15 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         WebCredentialEntity newEntity = null;
         try {
             newEntity = dao.save(entity);
-        }catch (RuntimeException ex){
+        }catch(DataIntegrityViolationException ex){
+            if(ex.getCause() instanceof ConstraintViolationException){
+                ConstraintViolationException cause = (ConstraintViolationException) ex.getCause();
+                if(cause.getSQLState().equals("23505") && cause.getConstraintName().equals("user_name_unique")){
+                    throw new IllegalArgumentException(IllegalArgumentException.Argument.USER_NAME, IllegalArgumentException.Validation.DUPLICATED);
+                }
+            }
+            throw new WebCredentialRegistrationException(ex);
+        } catch (RuntimeException ex){
             throw new WebCredentialRegistrationException(ex);
         }
         return buildWebCredential(newEntity);

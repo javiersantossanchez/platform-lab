@@ -2,12 +2,8 @@ package com.platform.general.microservice.web.credential.adapters.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
-import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
-import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialEntity;
-import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

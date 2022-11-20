@@ -6,16 +6,10 @@ import com.platform.general.microservice.web.credential.exceptions.WebCredential
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -30,7 +24,6 @@ import java.util.UUID;
 
 @Testcontainers
 @SpringBootTest
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 public class WebCredentialPostgresqlRepositoryComponentTest {
 
@@ -83,7 +76,7 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
     }
 
     @Test()
-    public void deleteOneCredentialWithRetryOnNotFoundError(){
+    public void deleteOneCredentialWithNotRetryOnNotFoundError(){
         UUID id = UUID.randomUUID();
         Mockito.doThrow(EmptyResultDataAccessException.class).when(repo).deleteById(id);
 
