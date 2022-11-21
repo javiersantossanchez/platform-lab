@@ -149,6 +149,10 @@ public class WebCredentialDaoTest  {
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class,()->{repository.findById(null);});
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+
     @Test
     public void deleteCredentialWhenIdDoesNotExist(){
         Assertions.assertThrows(EmptyResultDataAccessException.class,()->{repository.deleteById(UUID.randomUUID());});

@@ -246,6 +246,27 @@ class CredentialApiTests {
 		Assertions.assertEquals(credential2.getCredentialName(),newCredential.getCredentialName());
 	}
 
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	@Test
+	void deleteCredentialWhenOK() throws Exception {
+		WebCredentialEntity entity = WebCredentialEntity.builder()
+				.credentialName(faker.company().name())
+				.userName(faker.name().username())
+				.password(faker.internet().password())
+				.creationTime(LocalDateTime.now())
+				.build();
+		dao.save(entity);
+
+		MvcResult mvcResult = mockMvc.perform(
+				delete("/web-credentials/"+entity.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt())
+		).andExpect(status().isOk()).andReturn();
+	}
+
+
 /**
 	@Test
 	void insertMultiplesCredentialsAndSearchAll() throws Exception {
