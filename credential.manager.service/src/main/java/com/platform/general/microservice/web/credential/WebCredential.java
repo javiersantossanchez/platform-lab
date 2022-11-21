@@ -11,7 +11,7 @@ public class WebCredential {
 
     String userName;
 
-    String webSite;
+    String credentialName;
 
     LocalDateTime creationDate;
 

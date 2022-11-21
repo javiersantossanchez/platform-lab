@@ -63,7 +63,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Assertions.assertEquals(entityCreated.getPassword(),result.getPassword());
         Assertions.assertEquals(entityCreated.getUserName(),result.getUserName());
         Assertions.assertEquals(entityCreated.getCreationTime(),result.getCreationDate());
-        Assertions.assertEquals(entityCreated.getCredentialName(),result.getWebSite());
+        Assertions.assertEquals(entityCreated.getCredentialName(),result.getCredentialName());
 
         Assertions.assertEquals(entityCreated.getId(),result.getId());
     }

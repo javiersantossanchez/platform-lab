@@ -139,7 +139,7 @@ class CredentialApiTests {
 		WebCredentialParam body = new WebCredentialParam();
 		body.setPassword(password);
 		body.setUserName(faker.name().username());
-		body.setWebSite(faker.internet().domainName());
+		body.setCredentialName(faker.internet().domainName());
 
 		Jwt jwt = Jwt.withTokenValue("token")
 				.header("alg", "none")
@@ -166,7 +166,7 @@ class CredentialApiTests {
 		WebCredentialParam body = new WebCredentialParam();
 		body.setPassword("asdQSASAed2");
 		body.setUserName(userName);
-		body.setWebSite(faker.internet().domainName());
+		body.setCredentialName(faker.internet().domainName());
 
 		mockMvc.perform(
 				post("/web-credentials")
@@ -183,7 +183,7 @@ class CredentialApiTests {
 		WebCredentialParam body = new WebCredentialParam();
 		body.setPassword("asdQSASAed2");
 		body.setUserName(faker.name().username());
-		body.setWebSite(webSite);
+		body.setCredentialName(webSite);
 
 		mockMvc.perform(
 				post("/web-credentials")
@@ -212,7 +212,7 @@ class CredentialApiTests {
 		WebCredentialParam credential2 = new WebCredentialParam();
 		credential2.setPassword("asdQSASAed1");
 		credential2.setUserName(userName);
-		credential2.setWebSite(faker.internet().domainName());
+		credential2.setCredentialName(faker.internet().domainName());
 
 		MvcResult mvcResult = mockMvc.perform(
 				post("/web-credentials")
@@ -231,7 +231,7 @@ class CredentialApiTests {
 		WebCredentialParam credential2 = new WebCredentialParam();
 		credential2.setPassword("asdQSASAed1");
 		credential2.setUserName(faker.name().username());
-		credential2.setWebSite(faker.internet().domainName());
+		credential2.setCredentialName(faker.internet().domainName());
 
 		MvcResult mvcResult = mockMvc.perform(
 				post("/web-credentials")
@@ -243,7 +243,7 @@ class CredentialApiTests {
 		WebCredential newCredential = objectMapper.readValue(response, WebCredential.class);
 		Assertions.assertEquals(credential2.getUserName(),newCredential.getUserName());
 		Assertions.assertEquals(credential2.getPassword(),newCredential.getPassword());
-		Assertions.assertEquals(credential2.getWebSite(),newCredential.getWebSite());
+		Assertions.assertEquals(credential2.getCredentialName(),newCredential.getCredentialName());
 	}
 
 /**
@@ -359,7 +359,7 @@ class CredentialApiTests {
 		WebCredentialParam body1 = new WebCredentialParam();
 		body1.setPassword("asdQSASAed1");
 		body1.setUserName(faker.name().username());
-		body1.setWebSite(faker.internet().domainName());
+		body1.setCredentialName(faker.internet().domainName());
 
 		MvcResult credential1 = mockMvc.perform(
 				post("/web-credentials")
@@ -374,7 +374,7 @@ class CredentialApiTests {
 		WebCredentialParam body2 = new WebCredentialParam();
 		body2.setPassword("asdQSASAed2");
 		body2.setUserName(faker.name().username());
-		body2.setWebSite(faker.internet().domainName());
+		body2.setCredentialName(faker.internet().domainName());
 
 		MvcResult credential2 = mockMvc.perform(
 				post("/web-credentials")
@@ -397,7 +397,7 @@ class CredentialApiTests {
 
 		Assertions.assertEquals(pojo1.getPassword(),pojoResponse.getPassword());
 		Assertions.assertEquals(pojo1.getUserName(),pojoResponse.getUserName());
-		Assertions.assertEquals(pojo1.getWebSite(),pojoResponse.getWebSite());
+		Assertions.assertEquals(pojo1.getCredentialName(),pojoResponse.getCredentialName());
 	}
 
 }

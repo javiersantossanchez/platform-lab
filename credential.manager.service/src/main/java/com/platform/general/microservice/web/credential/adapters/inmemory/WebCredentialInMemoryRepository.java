@@ -18,7 +18,7 @@ public class WebCredentialInMemoryRepository implements WebCredentialRepository 
         WebCredential newCredential = new WebCredential();
         newCredential.setPassword(password);
         newCredential.setUserName(userName);
-        newCredential.setWebSite(webSite);
+        newCredential.setCredentialName(webSite);
         newCredential.setCreationDate(creationDate);
         newCredential.setId(id);
         webCredentialList.add(newCredential);
