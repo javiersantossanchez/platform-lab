@@ -7,6 +7,7 @@ import com.platform.general.microservice.web.credential.adapters.postgresql.WebC
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialEntity;
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
+import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -127,7 +128,9 @@ class CredentialApiTests {
 		Assertions.assertEquals(entity.getCreationTime(),credential.getCreationDate());
 		Assertions.assertEquals(entity.getId(),credential.getId());
 	}
-
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
 
 	@ParameterizedTest
 	@NullSource
@@ -189,6 +192,39 @@ class CredentialApiTests {
 						.with(jwt())
 		).andExpect(status().is(400));
 	}
+
+	@Test
+	void createCredentialWithUserNameDuplicated() throws Exception {
+		IllegalArgumentException exceptionExpected =
+				new IllegalArgumentException(IllegalArgumentException.Argument.USER_NAME, IllegalArgumentException.Validation.DUPLICATED);
+
+		String userName = faker.name().username();
+
+		WebCredentialEntity entity = WebCredentialEntity.builder()
+				.credentialName(faker.company().name())
+				.userName(userName)
+				.password(faker.internet().password())
+				.creationTime(LocalDateTime.now())
+				.build();
+		dao.save(entity);
+
+
+		WebCredentialParam credential2 = new WebCredentialParam();
+		credential2.setPassword("asdQSASAed1");
+		credential2.setUserName(userName);
+		credential2.setWebSite(faker.internet().domainName());
+
+		MvcResult mvcResult = mockMvc.perform(
+				post("/web-credentials")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(credential2))
+						.with(jwt())
+		).andExpect(status().is4xxClientError()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(exceptionExpected.getErrorMessage(),error.getErrorMessage());
+	}
+
 
 /**
 	@Test
@@ -284,7 +320,7 @@ class CredentialApiTests {
 				.contentType(MediaType.APPLICATION_JSON)
 		).andExpect(status().isOk()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
-		WebCredential[] pojos = objectMapper.readValue(response, WebCredential[].class);
+			WebCredential[] pojos = objectMapper.readValue(response, WebCredential[].class);
 
 		Assertions.assertTrue(
 		Arrays.stream(pojos).anyMatch(current ->
