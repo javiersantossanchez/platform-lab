@@ -225,6 +225,26 @@ class CredentialApiTests {
 		Assertions.assertEquals(exceptionExpected.getErrorMessage(),error.getErrorMessage());
 	}
 
+	@Test
+	void createCredentialWhenOK() throws Exception {
+
+		WebCredentialParam credential2 = new WebCredentialParam();
+		credential2.setPassword("asdQSASAed1");
+		credential2.setUserName(faker.name().username());
+		credential2.setWebSite(faker.internet().domainName());
+
+		MvcResult mvcResult = mockMvc.perform(
+				post("/web-credentials")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(credential2))
+						.with(jwt())
+		).andExpect(status().isOk()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		WebCredential newCredential = objectMapper.readValue(response, WebCredential.class);
+		Assertions.assertEquals(credential2.getUserName(),newCredential.getUserName());
+		Assertions.assertEquals(credential2.getPassword(),newCredential.getPassword());
+		Assertions.assertEquals(credential2.getWebSite(),newCredential.getWebSite());
+	}
 
 /**
 	@Test
