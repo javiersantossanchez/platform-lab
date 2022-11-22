@@ -20,9 +20,10 @@ import java.util.UUID;
  * @author  Javier Santos - javier.david.santos@gmail.com
  */
 @RestController
-@RequestMapping("/web-credentials")
+@RequestMapping("/"+CredentialApi.BASE_URL)
 public class CredentialApi {
 
+    static final String BASE_URL = "web-credentials";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CredentialApi.class);
 

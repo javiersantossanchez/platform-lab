@@ -84,7 +84,7 @@ class CredentialApiTests {
 		WebCredentialNotFoundException expectedResponse = new WebCredentialNotFoundException();
 
 		MvcResult mvcResult = mockMvc.perform(
-				get("/web-credentials/"+ UUID.randomUUID())
+				get("/{baseUrl}/{credentialID}/",CredentialApi.BASE_URL,UUID.randomUUID())
 						.contentType(MediaType.APPLICATION_JSON)
 						.with(jwt())
 		).andExpect(status().is4xxClientError()).andReturn();
@@ -97,7 +97,7 @@ class CredentialApiTests {
 	void searchCredentialWithInvalidId() throws Exception {
 
 		MvcResult mvcResult = mockMvc.perform(
-				get("/web-credentials/invalid-UUID")
+				get("/{baseUrl}/{credentialID}/",CredentialApi.BASE_URL,"invalid-uuid")
 						.contentType(MediaType.APPLICATION_JSON)
 						.with(jwt())
 		).andExpect(status().is4xxClientError()).andReturn();
@@ -117,7 +117,7 @@ class CredentialApiTests {
 		entity = dao.save(entity);
 
 		MvcResult mvcResult = mockMvc.perform(
-				get("/web-credentials/"+entity.getId())
+				get("/{baseUrl}/{credentialID}/",CredentialApi.BASE_URL,entity.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 						.with(jwt())
 		).andExpect(status().isOk()).andReturn();
@@ -152,7 +152,7 @@ class CredentialApiTests {
 
 
 		mockMvc.perform(
-				post("/web-credentials")
+				post("/{baseUrl}",CredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
 						.with(jwt().jwt(jwt))
@@ -169,7 +169,7 @@ class CredentialApiTests {
 		body.setCredentialName(faker.internet().domainName());
 
 		mockMvc.perform(
-				post("/web-credentials")
+				post("/{baseUrl}",CredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
 						.with(jwt())
@@ -186,7 +186,7 @@ class CredentialApiTests {
 		body.setCredentialName(webSite);
 
 		mockMvc.perform(
-				post("/web-credentials")
+				post("/{baseUrl}",CredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
 						.with(jwt())
@@ -215,7 +215,7 @@ class CredentialApiTests {
 		credential2.setCredentialName(faker.internet().domainName());
 
 		MvcResult mvcResult = mockMvc.perform(
-				post("/web-credentials")
+				post("/{baseUrl}",CredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(credential2))
 						.with(jwt())
@@ -234,7 +234,7 @@ class CredentialApiTests {
 		credential2.setCredentialName(faker.internet().domainName());
 
 		MvcResult mvcResult = mockMvc.perform(
-				post("/web-credentials")
+				post("/{baseUrl}",CredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(credential2))
 						.with(jwt())
@@ -260,7 +260,7 @@ class CredentialApiTests {
 		dao.save(entity);
 
 		MvcResult mvcResult = mockMvc.perform(
-				delete("/web-credentials/"+entity.getId())
+				delete("/{baseUrl}/{credentialID}",CredentialApi.BASE_URL,entity.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 						.with(jwt())
 		).andExpect(status().isOk()).andReturn();
@@ -374,7 +374,7 @@ class CredentialApiTests {
 						&& current.getWebSite().equals(body3.getWebSite())
 		));
 	}
-**/
+
 	@Test
 	void insertMultiplesCredentialsAndFindOneById() throws Exception {
 		WebCredentialParam body1 = new WebCredentialParam();
@@ -420,5 +420,6 @@ class CredentialApiTests {
 		Assertions.assertEquals(pojo1.getUserName(),pojoResponse.getUserName());
 		Assertions.assertEquals(pojo1.getCredentialName(),pojoResponse.getCredentialName());
 	}
+ **/
 
 }
