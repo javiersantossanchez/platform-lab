@@ -20,12 +20,12 @@ import java.util.UUID;
  * @author  Javier Santos - javier.david.santos@gmail.com
  */
 @RestController
-@RequestMapping("/"+CredentialApi.BASE_URL)
-public class CredentialApi {
+@RequestMapping("/"+ UserAndPasswordCredentialApi.BASE_URL)
+public class UserAndPasswordCredentialApi {
 
     static final String BASE_URL = "user-and-password-credentials";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CredentialApi.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserAndPasswordCredentialApi.class);
 
     @Autowired
     WebCredentialService webCredential;

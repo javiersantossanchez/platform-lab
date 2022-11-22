@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(exclude = {EmbeddedMongoAutoConfiguration.class})
 @Testcontainers
-class CredentialApiNoDBTests {
+class UserAndPasswordCredentialApiNoDBTests {
 
 	@Autowired
 	private MockMvc mockMvc;
