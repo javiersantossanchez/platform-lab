@@ -57,7 +57,7 @@ public class WebCredentialImpl implements WebCredentialService {
      * @return the credential object found in the system with the id
      */
     @Override
-    public WebCredential findCredential(UUID id) {
+    public WebCredential findById(UUID id) {
         return fetcher.findById(id);
     }
 

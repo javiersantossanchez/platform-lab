@@ -8,7 +8,7 @@ public interface WebCredentialService {
 
     WebCredential createNewWebCredential(String password, String userName, String webSite);
 
-    WebCredential findCredential(UUID id);
+    WebCredential findById(UUID id);
 
     void deleteByID(UUID id);
 }
