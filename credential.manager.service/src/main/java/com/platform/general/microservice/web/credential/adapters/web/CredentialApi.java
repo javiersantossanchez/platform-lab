@@ -14,9 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.UUID;
 
+/***
+ * Rest API controller for all end-points related with basic-credential (credential with user and password)
+ *
+ * @author  Javier Santos - javier.david.santos@gmail.com
+ */
 @RestController
 @RequestMapping("/web-credentials")
 public class CredentialApi {
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CredentialApi.class);
 
     @Autowired
