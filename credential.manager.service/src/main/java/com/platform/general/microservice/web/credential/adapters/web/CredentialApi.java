@@ -29,14 +29,6 @@ public class CredentialApi {
     @Autowired
     WebCredentialService webCredential;
 
-
-    /**@GetMapping("")
-    ResponseEntity<List<WebCredential>> getAll(HttpServletRequest request) {
-        //List<WebCredential> credentialList = webCredential.findAll();
-        //LOGGER.debug("The user searching all the credentials {}",credentialList);
-        return ResponseEntity.ok();
-    }**/
-
     @GetMapping("/{credentialId}")
     ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
         WebCredential credential = webCredential.findCredential(credentialId);
@@ -55,20 +47,4 @@ public class CredentialApi {
     void deleteCredential(@PathVariable(value = "credentialId",required = true) UUID credentialId) {
         webCredential.deleteByID(credentialId);
     }
-
-    /**
-    @GetMapping("/web-site/{webSite}")
-    List<WebCredential> getByWebSite(@PathVariable(value = "webSite",required = true) String webSite) {
-        WebCredentialFetcher fetcher = new WebCredentialFetcher();
-        return fetcher.fetchByWebSite(webSite);
-    }
-
-    @GetMapping("/{credentialId}")
-    List<WebCredential> getById(@PathVariable("credentialId") UUID credentialId) {
-        WebCredentialFetcher fetcher = new WebCredentialFetcher();
-        return fetcher.fetchById(credentialId);
-    }
-
-
-    */
 }
