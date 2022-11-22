@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequestMapping("/"+CredentialApi.BASE_URL)
 public class CredentialApi {
 
-    static final String BASE_URL = "web-credentials";
+    static final String BASE_URL = "user-and-password-credentials";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CredentialApi.class);
 
