@@ -75,7 +75,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 		postgreSQLDBContainer.stop();
 		MvcResult mvcResult = mockMvc.perform(
-				get("/web-credentials/"+ UUID.randomUUID())
+				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,UUID.randomUUID())
 						.contentType(MediaType.APPLICATION_JSON)
 						.with(jwt())
 		).andExpect(status().is5xxServerError()).andReturn();
