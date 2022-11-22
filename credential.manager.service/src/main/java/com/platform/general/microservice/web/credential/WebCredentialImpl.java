@@ -15,15 +15,15 @@ public class WebCredentialImpl implements WebCredentialService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebCredentialImpl.class);
 
-    private WebCredentialCreator creator;
+    private final WebCredentialCreator creator;
 
-    private WebCredentialFetcher fetcher;
-
-
-    private WebCredentialDeleter deleter;
+    private final WebCredentialFetcher fetcher;
 
 
-    private AuditEventRegister eventRegister;
+    private final WebCredentialDeleter deleter;
+
+
+    private final AuditEventRegister eventRegister;
 
     @Autowired
     public WebCredentialImpl(WebCredentialCreator creator, WebCredentialFetcher fetcher, WebCredentialDeleter deleter, AuditEventRegister eventRegister) {
