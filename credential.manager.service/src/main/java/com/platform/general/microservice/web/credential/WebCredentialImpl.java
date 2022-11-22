@@ -52,8 +52,9 @@ public class WebCredentialImpl implements WebCredentialService {
     }
 
     /**
-     * @param id 
-     * @return
+     * Search on the system the detail for a credential, based on the id received as parameter
+     * @param id - UUID unique value use as filter for the search.
+     * @return the credential object found in the system with the id
      */
     @Override
     public WebCredential findCredential(UUID id) {
