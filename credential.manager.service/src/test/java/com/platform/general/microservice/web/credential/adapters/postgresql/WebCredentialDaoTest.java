@@ -1,7 +1,6 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 import com.github.javafaker.Faker;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class WebCredentialDaoTest  {
                 .creationTime(LocalDateTime.now())
                 .userId(UUID.randomUUID())
                 .build();
-        Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.save(entity));
     }
 
     @Test
@@ -100,7 +99,7 @@ public class WebCredentialDaoTest  {
                 .creationTime(LocalDateTime.now())
                 .userId(UUID.randomUUID())
                 .build();
-        Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.save(entity));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class WebCredentialDaoTest  {
                 .creationTime(LocalDateTime.now())
                 .userId(UUID.randomUUID())
                 .build();
-        Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.save(entity));
     }
 
     @Test
@@ -147,7 +146,7 @@ public class WebCredentialDaoTest  {
                 .creationTime(LocalDateTime.now())
                 .userId(UUID.randomUUID())
                 .build();
-        Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.save(entity));
     }
 
     @Test
@@ -164,7 +163,7 @@ public class WebCredentialDaoTest  {
                 .creationTime(LocalDateTime.now())
                 .userId(UUID.randomUUID())
                 .build();
-        Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.save(entity));
     }
 
     @Test
@@ -181,7 +180,7 @@ public class WebCredentialDaoTest  {
                 .creationTime(LocalDateTime.now())
                 .userId(UUID.randomUUID())
                 .build();
-        Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.save(entity));
     }
 
     @Test
@@ -212,7 +211,7 @@ public class WebCredentialDaoTest  {
 
     @Test
     public void findCredentialByIDWithNull(){
-        Assertions.assertThrows(InvalidDataAccessApiUsageException.class,()->{repository.findById(null);});
+        Assertions.assertThrows(InvalidDataAccessApiUsageException.class,()-> repository.findById(null));
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -221,7 +220,7 @@ public class WebCredentialDaoTest  {
 
     @Test
     public void deleteCredentialWhenIdDoesNotExist(){
-        Assertions.assertThrows(EmptyResultDataAccessException.class,()->{repository.deleteById(UUID.randomUUID());});
+        Assertions.assertThrows(EmptyResultDataAccessException.class,()-> repository.deleteById(UUID.randomUUID()));
     }
 
 
