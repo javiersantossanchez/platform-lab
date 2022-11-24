@@ -10,12 +10,9 @@ CREATE TABLE IF NOT EXISTS user_password_credential (
 );
 
 
-
-
-
---CREATE TABLE IF NOT EXISTS credential_user (
---  credential_id uuid,
---  user_id uuid NOT NULL,
---  PRIMARY KEY ( credential_id,user_id ),
-  --FOREIGN KEY ( interrogation_id )
---);
+CREATE TABLE IF NOT EXISTS user_password_credential_user (
+  user_password_credential_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  PRIMARY KEY ( user_password_credential_id,user_id ),
+  FOREIGN KEY ( user_password_credential_id ) REFERENCES user_password_credential (user_password_credential_id)
+);
