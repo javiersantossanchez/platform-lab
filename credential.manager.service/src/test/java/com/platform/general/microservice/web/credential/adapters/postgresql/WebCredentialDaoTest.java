@@ -71,7 +71,11 @@ public class WebCredentialDaoTest  {
         String credentialName = faker.internet().domainName();
         String password = null;
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(username)
+                .credentialName(credentialName)
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 
@@ -82,7 +86,11 @@ public class WebCredentialDaoTest  {
         String credentialName = null;
         String password = faker.internet().password();
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(username)
+                .credentialName(credentialName)
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 
@@ -93,7 +101,11 @@ public class WebCredentialDaoTest  {
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(username)
+                .credentialName(credentialName)
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 
@@ -104,7 +116,11 @@ public class WebCredentialDaoTest  {
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password(51,60);
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(username)
+                .credentialName(credentialName)
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 
@@ -115,7 +131,11 @@ public class WebCredentialDaoTest  {
         String credentialName = faker.lorem().characters(101,110);
         String password = faker.internet().password();
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(username)
+                .credentialName(credentialName)
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 
@@ -126,7 +146,11 @@ public class WebCredentialDaoTest  {
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(username)
+                .credentialName(credentialName)
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
 

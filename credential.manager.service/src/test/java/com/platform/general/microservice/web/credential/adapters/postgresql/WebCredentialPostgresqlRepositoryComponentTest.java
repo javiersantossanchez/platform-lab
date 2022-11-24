@@ -56,7 +56,11 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
         String userName = faker.name().username();
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
-        WebCredentialEntity entity = new WebCredentialEntity(password,userName,credentialName);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(password)
+                .userName(userName)
+                .credentialName(credentialName)
+                .build();
         Mockito.doThrow(RuntimeException.class).when(repo).save(entity);
 
         Assertions.assertThrows(WebCredentialRegistrationException.class,()->{target.save(password, userName, credentialName,null);});
