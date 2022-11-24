@@ -62,9 +62,9 @@ public class WebCredentialDaoTest  {
                         .userName(username)
                         .credentialName(credentialName)
                         .creationTime(creationDate)
+                        .userId(UUID.randomUUID())
                         .build();
-        repository.save(entity);
-        WebCredentialEntity result = repository.findById(entity.getId()).orElse(null);
+        WebCredentialEntity result = repository.save(entity);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(entity,result);
     }
@@ -80,6 +80,8 @@ public class WebCredentialDaoTest  {
                 .password(password)
                 .userName(username)
                 .credentialName(credentialName)
+                .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
@@ -95,6 +97,8 @@ public class WebCredentialDaoTest  {
                 .password(password)
                 .userName(username)
                 .credentialName(credentialName)
+                .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
@@ -110,8 +114,23 @@ public class WebCredentialDaoTest  {
                 .password(password)
                 .userName(username)
                 .credentialName(credentialName)
+                .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
+    }
+
+    @Test
+    public void createOneCredentialWithNullAsUserId(){
+
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(faker.internet().password())
+                .userName(faker.name().username())
+                .credentialName(faker.internet().domainName())
+                .creationTime(LocalDateTime.now())
+                .userId(null)
+                .build();
+        Assertions.assertThrows(DataIntegrityViolationException.class,()->repository.save(entity));
     }
 
     @Test
@@ -125,6 +144,8 @@ public class WebCredentialDaoTest  {
                 .password(password)
                 .userName(username)
                 .credentialName(credentialName)
+                .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
@@ -140,6 +161,8 @@ public class WebCredentialDaoTest  {
                 .password(password)
                 .userName(username)
                 .credentialName(credentialName)
+                .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
@@ -155,6 +178,8 @@ public class WebCredentialDaoTest  {
                 .password(password)
                 .userName(username)
                 .credentialName(credentialName)
+                .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->{repository.save(entity);});
     }
@@ -168,6 +193,7 @@ public class WebCredentialDaoTest  {
                 .userName(username)
                 .credentialName(faker.internet().domainName())
                 .creationTime(LocalDateTime.now())
+                .userId(UUID.randomUUID())
                 .build();
 
         repository.save(entity);

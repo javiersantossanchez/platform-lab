@@ -1,9 +1,7 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,8 +10,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "user_password_credential")
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@NoArgsConstructor
 public class WebCredentialEntity {
 
     @Id
@@ -30,22 +29,11 @@ public class WebCredentialEntity {
     @Column(name = "credential_name",updatable = true,insertable = true,nullable = false)
     private String credentialName;
 
+    @Column(name = "user_id",updatable = false,insertable = true,nullable = false)
+    private UUID userId;
+
     @Column(name = "creation_time",updatable = false,insertable = true,nullable = false)
     private LocalDateTime  creationTime;
 
-    public WebCredentialEntity() {
-    }
 
-    public WebCredentialEntity(String password, String userName, String credentialName) {
-        this.password = password;
-        this.userName = userName;
-        this.credentialName = credentialName;
-    }
-
-    public WebCredentialEntity(String password, String userName, String credentialName, LocalDateTime creationTime) {
-        this.password = password;
-        this.userName = userName;
-        this.credentialName = credentialName;
-        this.creationTime = creationTime;
-    }
 }
