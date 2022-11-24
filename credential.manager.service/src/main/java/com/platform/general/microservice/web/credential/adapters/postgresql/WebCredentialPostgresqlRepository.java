@@ -32,7 +32,12 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
     @Retryable(value = { WebCredentialRegistrationException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public WebCredential save(String password, String userName, String credentialName, LocalDateTime creationDate) {
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,userName,credentialName,creationDate);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                        .password(password)
+                        .userName(userName)
+                        .credentialName(credentialName)
+                        .creationTime(creationDate)
+                        .build();
         WebCredentialEntity newEntity = null;
         try {
             newEntity = dao.save(entity);

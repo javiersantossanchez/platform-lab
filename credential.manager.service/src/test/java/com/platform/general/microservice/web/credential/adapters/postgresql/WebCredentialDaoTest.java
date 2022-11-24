@@ -57,7 +57,12 @@ public class WebCredentialDaoTest  {
         String password = faker.internet().password();
         LocalDateTime creationDate = LocalDateTime.now();
 
-        WebCredentialEntity entity = new WebCredentialEntity(password,username,credentialName,creationDate);
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                        .password(password)
+                        .userName(username)
+                        .credentialName(credentialName)
+                        .creationTime(creationDate)
+                        .build();
         repository.save(entity);
         WebCredentialEntity result = repository.findById(entity.getId()).orElse(null);
         Assertions.assertNotNull(result);
@@ -158,9 +163,20 @@ public class WebCredentialDaoTest  {
     public void createOneCredentialWithUserNameRepeated(){
         String username = faker.name().username();
 
-        WebCredentialEntity entity = new WebCredentialEntity(faker.internet().password(),username,faker.internet().domainName(),LocalDateTime.now());
+        WebCredentialEntity entity = WebCredentialEntity.builder()
+                .password(faker.internet().password())
+                .userName(username)
+                .credentialName(faker.internet().domainName())
+                .creationTime(LocalDateTime.now())
+                .build();
+
         repository.save(entity);
-        final WebCredentialEntity duplicatedEntity = new WebCredentialEntity(faker.internet().password(),username,faker.internet().domainName(),LocalDateTime.now());
+        final WebCredentialEntity duplicatedEntity =  WebCredentialEntity.builder()
+                .password(faker.internet().password())
+                .userName(username)
+                .credentialName(faker.internet().domainName())
+                .creationTime(LocalDateTime.now())
+                .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->repository.save(duplicatedEntity));
     }
     //////////////////////////////////////////////////////////////////////////
