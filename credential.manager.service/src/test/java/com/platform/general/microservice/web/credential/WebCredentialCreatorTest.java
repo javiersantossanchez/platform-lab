@@ -44,7 +44,7 @@ public class WebCredentialCreatorTest {
     public void createWithInvalidPassword(){
         String password = faker.internet().password();
         Mockito.doReturn(false).when(validator).isValid(password);
-        Assertions.assertThrows(InvalidPasswordException.class, () -> target.create(password,faker.name().username(),faker.internet().domainName()));
+        Assertions.assertThrows(InvalidPasswordException.class, () -> target.create(password,faker.name().username(),faker.internet().domainName(),UUID.randomUUID()));
     }
 
     @Test()
@@ -99,7 +99,7 @@ public class WebCredentialCreatorTest {
         String userName = faker.name().username();
         String webSite = faker.internet().domainName();
 
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite));
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite,UUID.randomUUID()));
         Assertions.assertEquals(IllegalArgumentException.Argument.PASSWORD,exception.getArgument());
         Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
@@ -111,7 +111,7 @@ public class WebCredentialCreatorTest {
         String password = faker.internet().password();
         String webSite = faker.internet().domainName();
 
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite));
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite,UUID.randomUUID()));
         Assertions.assertEquals(IllegalArgumentException.Argument.USER_NAME,exception.getArgument());
         Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
@@ -123,7 +123,7 @@ public class WebCredentialCreatorTest {
         String password = faker.internet().password();
         String userName = faker.name().username();
 
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite));
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite,UUID.randomUUID()));
         Assertions.assertEquals(IllegalArgumentException.Argument.WEB_SITE,exception.getArgument());
         Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
