@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 public class WebCredentialCreatorTest {
@@ -50,14 +51,15 @@ public class WebCredentialCreatorTest {
         String password = faker.internet().password();
         String userName = faker.name().username();
         String webSite = faker.internet().domainName();
+        UUID userId = UUID.randomUUID();
         LocalDateTime now =  LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
 
         Mockito.doReturn(true).when(validator).isValid(password);
         Mockito.doReturn(now).when(dateManager).getCurrentLocalDate();
 
-        Mockito.doReturn(new WebCredential()).when(repository).save(password,userName,webSite,now);
-        WebCredential result = target.create(password,userName,webSite);
-        Mockito.verify(repository,Mockito.times(1)).save(password,userName,webSite,now);
+        Mockito.doReturn(new WebCredential()).when(repository).save(password,userName,webSite,now,userId);
+        WebCredential result = target.create(password,userName,webSite,userId);
+        Mockito.verify(repository,Mockito.times(1)).save(password,userName,webSite,now,userId);
         Assertions.assertNotNull(result);
     }
 

@@ -18,20 +18,6 @@ public interface WebCredentialRepository {
      * @param webSite
      * @param creationDate
      *
-     * @exception WebCredentialRegistrationException when an error is generated on saving the credential
-     * @return
-     */
-    default WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate) {
-        return save(password, userName, webSite, creationDate, UUID.randomUUID());
-    }
-
-    /***
-     *
-     * @param password
-     * @param userName
-     * @param webSite
-     * @param creationDate
-     *
      * @param userId
      * @exception WebCredentialRegistrationException when an error is generated on saving the credential
      * @return
