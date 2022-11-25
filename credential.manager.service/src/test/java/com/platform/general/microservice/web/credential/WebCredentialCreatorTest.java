@@ -3,6 +3,7 @@ package com.platform.general.microservice.web.credential;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import com.platform.general.microservice.web.credential.utils.DateManager;
 import com.platform.general.microservice.web.credential.validators.PasswordValidator;
@@ -61,6 +62,34 @@ public class WebCredentialCreatorTest {
         WebCredential result = target.create(password,userName,webSite,userId);
         Mockito.verify(repository,Mockito.times(1)).save(password,userName,webSite,now,userId);
         Assertions.assertNotNull(result);
+    }
+
+    @Test()
+    public void createWhenAnExceptionIsThrownCreatingCredential(){
+        String password = faker.internet().password();
+        String userName = faker.name().username();
+        String webSite = faker.internet().domainName();
+        UUID userId = UUID.randomUUID();
+        LocalDateTime now =  LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+
+        Mockito.doReturn(true).when(validator).isValid(password);
+        Mockito.doReturn(now).when(dateManager).getCurrentLocalDate();
+
+        Mockito.doThrow(WebCredentialRegistrationException.class).when(repository).save(password,userName,webSite,now,userId);
+        Assertions.assertThrows(WebCredentialRegistrationException.class,()-> target.create(password,userName,webSite,userId));
+    }
+
+    @Test()
+    public void createWhenEmptyUserID(){
+        String userName = faker.name().username();
+        String webSite = faker.internet().domainName();
+        String password = faker.internet().password();
+        UUID userId =null;
+        LocalDateTime now =  LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()-> target.create(password,userName,webSite,userId));
+        Assertions.assertEquals(IllegalArgumentException.Argument.USER_ID,exception.getArgument());
+        Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
 
     @ParameterizedTest

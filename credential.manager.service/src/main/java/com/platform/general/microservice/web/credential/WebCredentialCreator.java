@@ -42,6 +42,9 @@ public class WebCredentialCreator implements IWebCredentialCreator {
         if(StringUtils.isBlank(webSite)){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.WEB_SITE, IllegalArgumentException.Validation.NOT_EMPTY);
         }
+        if(userId == null){
+            throw new IllegalArgumentException(IllegalArgumentException.Argument.USER_ID, IllegalArgumentException.Validation.NOT_EMPTY);
+        }
         if(!validator.isValid(password)) {
             throw new InvalidPasswordException();
         }
