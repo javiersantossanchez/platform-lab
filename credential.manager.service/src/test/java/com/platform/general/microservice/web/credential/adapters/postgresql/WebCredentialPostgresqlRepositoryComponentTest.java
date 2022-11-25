@@ -20,6 +20,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Testcontainers
@@ -56,14 +57,18 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
         String userName = faker.name().username();
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
+        LocalDateTime now = LocalDateTime.now();
+        UUID userId = UUID.randomUUID();
         WebCredentialEntity entity = WebCredentialEntity.builder()
                 .password(password)
                 .userName(userName)
                 .credentialName(credentialName)
+                .creationTime(now)
+                .userId(userId)
                 .build();
         Mockito.doThrow(RuntimeException.class).when(repo).save(entity);
 
-        Assertions.assertThrows(WebCredentialRegistrationException.class,()->{target.save(password, userName, credentialName,null);});
+        Assertions.assertThrows(WebCredentialRegistrationException.class,()->target.save(password, userName, credentialName,now,userId));
 
         Mockito.verify(repo,Mockito.times(3)).save(entity);
     }

@@ -7,7 +7,6 @@ import com.platform.general.microservice.web.credential.exceptions.WebCredential
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 public interface WebCredentialRepository {
@@ -22,7 +21,22 @@ public interface WebCredentialRepository {
      * @exception WebCredentialRegistrationException when an error is generated on saving the credential
      * @return
      */
-    WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate);
+    default WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate) {
+        return save(password, userName, webSite, creationDate, UUID.randomUUID());
+    }
+
+    /***
+     *
+     * @param password
+     * @param userName
+     * @param webSite
+     * @param creationDate
+     *
+     * @param userId
+     * @exception WebCredentialRegistrationException when an error is generated on saving the credential
+     * @return
+     */
+    WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate, UUID userId);
 
 
     /**

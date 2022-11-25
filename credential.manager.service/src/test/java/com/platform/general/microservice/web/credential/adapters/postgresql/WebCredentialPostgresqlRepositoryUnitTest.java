@@ -39,12 +39,14 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         String password = faker.internet().password();
         LocalDateTime creationDate =  LocalDateTime.now();
         UUID id = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
         WebCredentialEntity entity =  WebCredentialEntity
                 .builder()
                 .userName(userName)
                 .password(password)
                 .credentialName(credentialName)
                 .creationTime(creationDate)
+                .userId(userId)
                 .build();
         WebCredentialEntity entityCreated =  WebCredentialEntity
                 .builder()
@@ -53,11 +55,12 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
                 .password(password)
                 .credentialName(credentialName)
                 .creationTime(creationDate)
+                .userId(userId)
                 .build();
 
         Mockito.doReturn(entityCreated).when(repo).save(entity);
 
-        WebCredential result = target.save(password, userName, credentialName,creationDate);
+        WebCredential result = target.save(password, userName, credentialName,creationDate,userId);
 
         Mockito.verify(repo,Mockito.times(1)).save(entity);
         Assertions.assertEquals(entityCreated.getPassword(),result.getPassword());
@@ -74,19 +77,21 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
         LocalDateTime creationDate =  LocalDateTime.now();
+        UUID userId = UUID.randomUUID();
         WebCredentialEntity entity =  WebCredentialEntity
                 .builder()
                 .userName(userName)
                 .password(password)
                 .credentialName(credentialName)
                 .creationTime(creationDate)
+                .userId(userId)
                 .build();
 
         SQLException sqlEx = new SQLException(faker.friends().quote(),"23505");
         ConstraintViolationException cex = new ConstraintViolationException(faker.friends().quote(),sqlEx,"user_name_unique");
         Mockito.doThrow(new DataIntegrityViolationException(faker.friends().quote(),cex)).when(repo).save(entity);
 
-        Assertions.assertThrows(IllegalArgumentException.class,()->target.save(password, userName, credentialName,creationDate));
+        Assertions.assertThrows(IllegalArgumentException.class,()->target.save(password, userName, credentialName,creationDate,userId));
 
     }
 
@@ -96,15 +101,17 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         String credentialName = faker.internet().domainName();
         String password = faker.internet().password();
         LocalDateTime creationDate = LocalDateTime.now();
+        UUID userId = UUID.randomUUID();
         WebCredentialEntity entity = WebCredentialEntity.builder()
                 .password(password)
                 .userName(userName)
                 .credentialName(credentialName)
                 .creationTime(creationDate)
+                .userId(userId)
                 .build();
         Mockito.doThrow(RuntimeException.class).when(repo).save(entity);
 
-        Assertions.assertThrows(WebCredentialRegistrationException.class,()->{target.save(password, userName, credentialName,creationDate);});
+        Assertions.assertThrows(WebCredentialRegistrationException.class,()->target.save(password, userName, credentialName,creationDate,userId));
         Mockito.verify(repo,Mockito.times(1)).save(entity);
     }
 

@@ -30,13 +30,14 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
      */
     @Override
     @Retryable(value = { WebCredentialRegistrationException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public WebCredential save(String password, String userName, String credentialName, LocalDateTime creationDate) {
+    public WebCredential save(String password, String userName, String credentialName, LocalDateTime creationDate, UUID userId) {
 
         WebCredentialEntity entity = WebCredentialEntity.builder()
                         .password(password)
                         .userName(userName)
                         .credentialName(credentialName)
                         .creationTime(creationDate)
+                        .userId(userId)
                         .build();
         WebCredentialEntity newEntity = null;
         try {

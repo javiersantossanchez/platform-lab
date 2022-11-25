@@ -13,7 +13,7 @@ public class WebCredentialInMemoryRepository implements WebCredentialRepository 
     public static List<WebCredential> webCredentialList = new ArrayList<>();
 
     @Override
-    public WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate) {
+    public WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate, UUID userId) {
         UUID id = UUID.randomUUID();
         WebCredential newCredential = new WebCredential();
         newCredential.setPassword(password);

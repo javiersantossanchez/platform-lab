@@ -113,6 +113,7 @@ class UserAndPasswordCredentialApiTests {
 										.userName(faker.name().username())
 										.password(faker.internet().password())
 										.creationTime(LocalDateTime.now())
+										.userId(UUID.randomUUID())
 										.build();
 		entity = dao.save(entity);
 
@@ -205,6 +206,7 @@ class UserAndPasswordCredentialApiTests {
 				.userName(userName)
 				.password(faker.internet().password())
 				.creationTime(LocalDateTime.now())
+				.userId(UUID.randomUUID())
 				.build();
 		dao.save(entity);
 
@@ -256,6 +258,7 @@ class UserAndPasswordCredentialApiTests {
 				.userName(faker.name().username())
 				.password(faker.internet().password())
 				.creationTime(LocalDateTime.now())
+				.userId(UUID.randomUUID())
 				.build();
 		dao.save(entity);
 
