@@ -25,7 +25,7 @@ public class WebCredentialImplTest {
     WebCredentialImpl target;
 
     @Mock
-    WebCredentialCreator creator;
+    IWebCredentialCreator creator;
 
     @Mock
     WebCredentialFetcher fetcher;

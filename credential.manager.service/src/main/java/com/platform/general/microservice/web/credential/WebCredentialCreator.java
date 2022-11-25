@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WebCredentialCreator {
+public class WebCredentialCreator implements IWebCredentialCreator {
 
 
     private final WebCredentialRepository repository;
@@ -29,6 +29,7 @@ public class WebCredentialCreator {
         this.dateManager = dateManager;
     }
 
+    @Override
     public WebCredential create(String password, String userName, String webSite) {
         if(StringUtils.isBlank(password)){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.PASSWORD, IllegalArgumentException.Validation.NOT_EMPTY);

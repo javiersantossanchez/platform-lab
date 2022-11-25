@@ -15,7 +15,7 @@ public class WebCredentialImpl implements WebCredentialService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebCredentialImpl.class);
 
-    private final WebCredentialCreator creator;
+    private final IWebCredentialCreator creator;
 
     private final WebCredentialFetcher fetcher;
 
@@ -26,7 +26,7 @@ public class WebCredentialImpl implements WebCredentialService {
     private final AuditEventRegister eventRegister;
 
     @Autowired
-    public WebCredentialImpl(WebCredentialCreator creator, WebCredentialFetcher fetcher, WebCredentialDeleter deleter, AuditEventRegister eventRegister) {
+    public WebCredentialImpl(IWebCredentialCreator creator, WebCredentialFetcher fetcher, WebCredentialDeleter deleter, AuditEventRegister eventRegister) {
         this.creator = creator;
         this.fetcher = fetcher;
         this.deleter = deleter;
