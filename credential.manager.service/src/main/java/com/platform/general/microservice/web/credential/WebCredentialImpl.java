@@ -34,7 +34,7 @@ public class WebCredentialImpl implements WebCredentialService {
     }
 
     @Override
-    public WebCredential createNewWebCredential(String password, String userName, String webSite){
+    public WebCredential createNewWebCredential(String password, String userName, String webSite, UUID userId){
         LOGGER.debug("Starting create a new credential");
         if(StringUtils.isBlank(password)){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.PASSWORD, IllegalArgumentException.Validation.NOT_EMPTY);
