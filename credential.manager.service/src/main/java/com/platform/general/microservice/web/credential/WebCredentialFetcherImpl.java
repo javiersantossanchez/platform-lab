@@ -20,7 +20,7 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
 
 
     @Override
-    public WebCredential findById(final UUID id) {
+    public WebCredential findById(final UUID id, UUID userId) {
         return repository.findById(id);
     }
 }
