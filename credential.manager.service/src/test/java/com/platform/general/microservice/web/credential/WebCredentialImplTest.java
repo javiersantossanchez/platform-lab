@@ -95,6 +95,7 @@ public class WebCredentialImplTest {
 
     @Test
     public void findCredentialWhenOk(){
+        UUID userId = UUID.randomUUID();
         WebCredential newCredential = WebCredential
                 .builder()
                 .password(faker.internet().password())
@@ -102,8 +103,8 @@ public class WebCredentialImplTest {
                 .credentialName(faker.internet().domainName())
                 .id(UUID.randomUUID())
                 .build();
-        Mockito.doReturn(newCredential).when(fetcher).findById(newCredential.getId());
-        WebCredential credentialFound = target.findById(newCredential.getId());
+        Mockito.doReturn(newCredential).when(fetcher).findById(newCredential.getId(),userId);
+        WebCredential credentialFound = target.findById(newCredential.getId(),userId);
         Assertions.assertEquals(newCredential,credentialFound);
     }
 
