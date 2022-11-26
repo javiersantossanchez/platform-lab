@@ -1,6 +1,7 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 import com.github.javafaker.Faker;
+import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -212,6 +214,31 @@ public class WebCredentialDaoTest  {
     @Test
     public void findCredentialByIDWithNull(){
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class,()-> repository.findById(null));
+    }
+
+    @Test
+    public void findCredentialByIDAndUserIDWhenCredentialBelongsToOtherUser(){
+        WebCredentialEntity entityCreated = repository.save(WebCredentialEntityMother.DummyRandomCredential());
+        UUID idOfDifferentUser;
+        do{
+            idOfDifferentUser = UUID.randomUUID();
+        }while(idOfDifferentUser.equals(entityCreated.getUserId()));
+        Optional<WebCredentialEntity> entityFound = repository.findOneByIdAndUserId(entityCreated.getId(),idOfDifferentUser);
+        Assertions.assertFalse(entityFound.isPresent());
+    }
+
+    @Test
+    public void findCredentialByIDAndUserIDWhenOk(){
+        WebCredentialEntity entityCreated = repository.save(WebCredentialEntityMother.DummyRandomCredential());
+        Optional<WebCredentialEntity> entityFound = repository.findOneByIdAndUserId(entityCreated.getId(),entityCreated.getUserId());
+        Assertions.assertTrue(entityFound.isPresent());
+        Assertions.assertEquals(entityCreated,entityFound.get());
+    }
+
+    @Test
+    public void findCredentialByIDAndUserIDWithParamsAsNull(){
+        Optional<WebCredentialEntity> entityFound = repository.findOneByIdAndUserId(null,null);
+        Assertions.assertTrue(entityFound.isEmpty());
     }
 
     //////////////////////////////////////////////////////////////////////////
