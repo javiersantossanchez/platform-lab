@@ -8,6 +8,7 @@ import com.platform.general.microservice.web.credential.adapters.postgresql.WebC
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -211,6 +212,38 @@ class UserAndPasswordCredentialApiTests {
 	}
 
 	@Test
+	void createCredentialWithInvalidUserID() throws Exception {
+		InvalidUserInformationException exceptionExpected =
+				new InvalidUserInformationException();
+
+		WebCredentialParam body = new WebCredentialParam();
+		body.setPassword("asdQSASAed2");
+		body.setUserName(faker.name().username());
+		body.setCredentialName(faker.internet().domainName());
+
+		String invalidUserId = "invalid-user-id";
+
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", invalidUserId)
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
+		MvcResult mvcResult = mockMvc.perform(
+				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(body))
+						.with(jwt().jwt(jwt))
+		).andExpect(status().is(400)).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(exceptionExpected.getErrorMessage(),error.getErrorMessage());
+	}
+
+	@Test
 	void createCredentialWithUserNameDuplicated() throws Exception {
 		IllegalArgumentException exceptionExpected =
 				new IllegalArgumentException(IllegalArgumentException.Argument.USER_NAME, IllegalArgumentException.Validation.DUPLICATED);
@@ -254,6 +287,7 @@ class UserAndPasswordCredentialApiTests {
 	@Test
 	void createCredentialWhenOK() throws Exception {
 
+		UUID userId = UUID.randomUUID();
 		WebCredentialParam credential2 = new WebCredentialParam();
 		credential2.setPassword("asdQSASAed1");
 		credential2.setUserName(faker.name().username());
@@ -261,7 +295,7 @@ class UserAndPasswordCredentialApiTests {
 
 		Jwt jwt = Jwt.withTokenValue("token")
 				.header("alg", "none")
-				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("sub", userId)
 				.claim("scope", "openid profile email")
 				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
 				.claim("given_name", "javier")
@@ -279,6 +313,7 @@ class UserAndPasswordCredentialApiTests {
 		Assertions.assertEquals(credential2.getUserName(),newCredential.getUserName());
 		Assertions.assertEquals(credential2.getPassword(),newCredential.getPassword());
 		Assertions.assertEquals(credential2.getCredentialName(),newCredential.getCredentialName());
+		Assertions.assertEquals(userId,newCredential.getUserId());
 	}
 
 	/////////////////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 package com.platform.general.microservice.web.credential.adapters.web.error;
 
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class ErrorHandler {
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity notFoundError(IllegalArgumentException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
+    }
+
+    @ExceptionHandler({InvalidUserInformationException.class})
+    public ResponseEntity notFoundError(InvalidUserInformationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
     }
 
