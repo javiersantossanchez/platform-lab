@@ -2,6 +2,7 @@ package com.platform.general.microservice.web.credential.adapters.web;
 
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
+import com.platform.general.microservice.web.credential.adapters.web.security.UserWrapper;
 import com.platform.general.microservice.web.credential.ports.in.WebCredentialService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,8 @@ public class UserAndPasswordCredentialApi {
 
     @PostMapping("")
     ResponseEntity<WebCredential> create(@RequestBody WebCredentialParam newCredential, Principal principal,@AuthenticationPrincipal Jwt jwt) {// principal and jwt are the paremeters required to review the user or authentication information
-        WebCredential response = webCredential.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getCredentialName());
+        UserWrapper userWrapper = new UserWrapper(principal);
+        WebCredential response = webCredential.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getCredentialName(),userWrapper.getId());
         LOGGER.debug("New credential was created by the user, Credential: {}",response);
         return ResponseEntity.ok(response);
     }

@@ -168,12 +168,19 @@ class UserAndPasswordCredentialApiTests {
 		body.setPassword("asdQSASAed2");
 		body.setUserName(userName);
 		body.setCredentialName(faker.internet().domainName());
-
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
 		mockMvc.perform(
 				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().is(400));
 	}
 
@@ -186,11 +193,20 @@ class UserAndPasswordCredentialApiTests {
 		body.setUserName(faker.name().username());
 		body.setCredentialName(webSite);
 
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
 		mockMvc.perform(
 				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().is(400));
 	}
 
@@ -210,6 +226,14 @@ class UserAndPasswordCredentialApiTests {
 				.build();
 		dao.save(entity);
 
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
 
 		WebCredentialParam credential2 = new WebCredentialParam();
 		credential2.setPassword("asdQSASAed1");
@@ -220,7 +244,7 @@ class UserAndPasswordCredentialApiTests {
 				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(credential2))
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().is4xxClientError()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
@@ -235,11 +259,20 @@ class UserAndPasswordCredentialApiTests {
 		credential2.setUserName(faker.name().username());
 		credential2.setCredentialName(faker.internet().domainName());
 
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
 		MvcResult mvcResult = mockMvc.perform(
 				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(credential2))
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().isOk()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		WebCredential newCredential = objectMapper.readValue(response, WebCredential.class);
