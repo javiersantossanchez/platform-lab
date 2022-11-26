@@ -127,16 +127,18 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
     @Test()
     public void findCredentialByIDWhenIdDoesNotExist(){
         UUID id = UUID.randomUUID();
-        Mockito.doReturn(Optional.ofNullable(null)).when(repo).findById(id);
-        Assertions.assertThrows(WebCredentialNotFoundException.class,()->target.findById(id));
+        UUID userId = UUID.randomUUID();
+        Mockito.doReturn(Optional.ofNullable(null)).when(repo).findOneByIdAndUserId(id,userId);
+        Assertions.assertThrows(WebCredentialNotFoundException.class,()->target.findById(id,userId));
     }
 
     @Test()
     public void findCredentialByIDWhenDatabaseErrorIsThrown(){
         UUID id = UUID.randomUUID();
-        Mockito.doThrow(RuntimeException.class).when(repo).findById(id);
+        UUID userId = UUID.randomUUID();
+        Mockito.doThrow(RuntimeException.class).when(repo).findOneByIdAndUserId(id,userId);
 
-        Assertions.assertThrows(WebCredentialSearchException.class,()->{target.findById(id);});
+        Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(id,userId));
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +151,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
 
     @Test()
     public void deleteCredentialByIDWhenIdDoesNotExist(){
-        UUID id = UUID.randomUUID();findCredentialByIDWhenIdDoesNotExist();
+        UUID id = UUID.randomUUID();
         Mockito.doThrow(EmptyResultDataAccessException.class).when(repo).deleteById(id);
         Assertions.assertThrows(WebCredentialNotFoundException.class,()-> target.deleteById(id) );
     }

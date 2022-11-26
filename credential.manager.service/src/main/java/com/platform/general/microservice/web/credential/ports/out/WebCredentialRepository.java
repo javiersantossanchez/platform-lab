@@ -33,7 +33,19 @@ public interface WebCredentialRepository {
      * @return
      *
      */
-    WebCredential findById(UUID id);
+    default WebCredential findById(UUID id) {
+        return findById(id, null);
+    }
+
+    /**
+     *
+     * @exception WebCredentialSearchException - A error its generated during the searching
+     * @exception IllegalArgumentException - when @id has invalid value
+     * @exception WebCredentialNotFoundException - The id does not exist on the system
+     * @return
+     *
+     */
+    WebCredential findById(UUID id, UUID userId);
 
     /**
      * @param id

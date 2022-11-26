@@ -62,13 +62,13 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
      * {@inheritDoc}
      */
     @Override
-    public WebCredential findById(UUID id) {
+    public WebCredential findById(UUID id, UUID userId) {
         if(id == null){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
         }
         WebCredentialEntity newEntity = null;
         try {
-            newEntity = dao.findById(id).orElse(null);
+            newEntity = dao.findOneByIdAndUserId(id, userId).orElse(null);
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
         }
