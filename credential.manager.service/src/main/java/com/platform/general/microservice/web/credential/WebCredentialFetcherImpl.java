@@ -18,9 +18,8 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
         this.repository = repository;
     }
 
-
     @Override
-    public WebCredential findById(final UUID id, UUID userId) {
-        return repository.findById(id);
+    public WebCredential findById(final UUID id, final UUID userId) {
+        return repository.findById(id,userId);
     }
 }
