@@ -6,10 +6,6 @@ import java.util.UUID;
 
 public interface WebCredentialService {
 
-    default WebCredential createNewWebCredential(String password, String userName, String webSite) {
-        return createNewWebCredential(password, userName, webSite, UUID.randomUUID());
-    }
-
     WebCredential createNewWebCredential(String password, String userName, String webSite, UUID userId);
 
     default WebCredential findById(UUID id) {
