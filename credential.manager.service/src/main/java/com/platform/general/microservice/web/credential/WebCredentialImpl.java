@@ -46,7 +46,7 @@ public class WebCredentialImpl implements WebCredentialService {
             throw new IllegalArgumentException(IllegalArgumentException.Argument.WEB_SITE, IllegalArgumentException.Validation.NOT_EMPTY);
         }
         eventRegister.register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
-        WebCredential credential = creator.create(password, userName, webSite);
+        WebCredential credential = creator.create(password, userName, webSite,userId);
         LOGGER.debug("New credential created");
         return credential;
     }

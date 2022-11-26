@@ -38,22 +38,27 @@ public class WebCredentialImplTest {
 
     @Test
     public void createNewCredentialWhenOK(){
+        String password = faker.internet().password();
+        String userName = faker.name().username();
+        String credentialName = faker.internet().domainName();
+        UUID userId = UUID.randomUUID();
 
         WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(faker.internet().password());
-        newCredential.setUserName(faker.name().username());
-        newCredential.setCredentialName(faker.internet().domainName());
+        newCredential.setPassword(password);
+        newCredential.setUserName(userName);
+        newCredential.setCredentialName(credentialName);
         newCredential.setId(UUID.randomUUID());
-        Mockito.doReturn(newCredential).when(creator).create(newCredential.getPassword(),newCredential.getUserName(),newCredential.getCredentialName());
+
+        Mockito.doReturn(newCredential).when(creator).create(password,userName,credentialName,userId);
         Mockito.doReturn(CompletableFuture.completedFuture(AuditEvent.builder().build())).when(auditEventRegister).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
 
-        WebCredential credentialCreated = target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getCredentialName());
+        WebCredential credentialCreated = target.createNewWebCredential(password,userName,credentialName,userId);
         Assertions.assertEquals(newCredential.getPassword(),credentialCreated.getPassword());
         Assertions.assertEquals(newCredential.getUserName(),credentialCreated.getUserName());
         Assertions.assertEquals(newCredential.getCredentialName(),credentialCreated.getCredentialName());
         Assertions.assertNotNull(credentialCreated.getId());
 
-        Mockito.verify(creator,Mockito.times(1)).create(newCredential.getPassword(), newCredential.getUserName(), newCredential.getCredentialName());
+        Mockito.verify(creator,Mockito.times(1)).create(password,userName,credentialName,userId);
         Mockito.verify(auditEventRegister,Mockito.times(1)).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
     }
 
@@ -62,13 +67,7 @@ public class WebCredentialImplTest {
     @EmptySource
     public void createNewCredentialWhenEmptyPassword(String password){
 
-        WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(password);
-        newCredential.setUserName(faker.name().username());
-        newCredential.setCredentialName(faker.internet().domainName());
-        newCredential.setId(UUID.randomUUID());
-
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->{target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getCredentialName());});
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->target.createNewWebCredential(password, faker.name().username(), faker.internet().domainName(),UUID.randomUUID()));
         Assertions.assertEquals(IllegalArgumentException.Argument.PASSWORD,exception.getArgument());
         Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
@@ -78,13 +77,7 @@ public class WebCredentialImplTest {
     @EmptySource
     public void createNewCredentialWhenEmptyUserName(String userName){
 
-        WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(faker.internet().password());
-        newCredential.setUserName(userName);
-        newCredential.setCredentialName(faker.internet().domainName());
-        newCredential.setId(UUID.randomUUID());
-
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->{target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getCredentialName());});
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->target.createNewWebCredential(faker.internet().password(), userName, faker.internet().domainName(),UUID.randomUUID()));
         Assertions.assertEquals(IllegalArgumentException.Argument.USER_NAME,exception.getArgument());
         Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
@@ -94,13 +87,7 @@ public class WebCredentialImplTest {
     @EmptySource
     public void createNewCredentialWhenEmptyWebSite(String webSite){
 
-        WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(faker.internet().password());
-        newCredential.setUserName(faker.name().username());
-        newCredential.setCredentialName(webSite);
-        newCredential.setId(UUID.randomUUID());
-
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->{target.createNewWebCredential(newCredential.getPassword(), newCredential.getUserName(), newCredential.getCredentialName());});
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->target.createNewWebCredential(faker.internet().password(), faker.name().username(), webSite,UUID.randomUUID()));
         Assertions.assertEquals(IllegalArgumentException.Argument.WEB_SITE,exception.getArgument());
         Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
