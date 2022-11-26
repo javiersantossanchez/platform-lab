@@ -102,12 +102,15 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         if(entity == null){
             return null;
         }
-        WebCredential webCredential = new WebCredential();
-        webCredential.setPassword(entity.getPassword());
-        webCredential.setUserName(entity.getUserName());
-        webCredential.setCreationDate(entity.getCreationTime());
-        webCredential.setId(entity.getId());
-        webCredential.setCredentialName(entity.getCredentialName());
-        return webCredential;
+
+        return  WebCredential
+                .builder()
+                .password(entity.getPassword())
+                .userName(entity.getUserName())
+                .creationDate(entity.getCreationTime())
+                .credentialName(entity.getCredentialName())
+                .id(entity.getId())
+                .userId(entity.getUserId())
+                .build();
     }
 }

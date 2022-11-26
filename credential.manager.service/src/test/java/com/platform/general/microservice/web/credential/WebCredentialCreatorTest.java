@@ -58,7 +58,7 @@ public class WebCredentialCreatorTest {
         Mockito.doReturn(true).when(validator).isValid(password);
         Mockito.doReturn(now).when(dateManager).getCurrentLocalDate();
 
-        Mockito.doReturn(new WebCredential()).when(repository).save(password,userName,webSite,now,userId);
+        Mockito.doReturn(WebCredential.builder().build()).when(repository).save(password,userName,webSite,now,userId);
         WebCredential result = target.create(password,userName,webSite,userId);
         Mockito.verify(repository,Mockito.times(1)).save(password,userName,webSite,now,userId);
         Assertions.assertNotNull(result);

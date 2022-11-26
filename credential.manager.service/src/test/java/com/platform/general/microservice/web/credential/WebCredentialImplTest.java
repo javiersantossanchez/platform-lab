@@ -43,11 +43,12 @@ public class WebCredentialImplTest {
         String credentialName = faker.internet().domainName();
         UUID userId = UUID.randomUUID();
 
-        WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(password);
-        newCredential.setUserName(userName);
-        newCredential.setCredentialName(credentialName);
-        newCredential.setId(UUID.randomUUID());
+        WebCredential newCredential = WebCredential.builder()
+                .password(password)
+                .userName(userName)
+                .credentialName(credentialName)
+                .id(UUID.randomUUID())
+                .build();
 
         Mockito.doReturn(newCredential).when(creator).create(password,userName,credentialName,userId);
         Mockito.doReturn(CompletableFuture.completedFuture(AuditEvent.builder().build())).when(auditEventRegister).register(AuditEvent.AuditEventType.CREATE_CREDENTIAL);
@@ -94,11 +95,13 @@ public class WebCredentialImplTest {
 
     @Test
     public void findCredentialWhenOk(){
-        WebCredential newCredential = new WebCredential();
-        newCredential.setPassword(faker.internet().password());
-        newCredential.setUserName(faker.name().username());
-        newCredential.setCredentialName(faker.internet().domainName());
-        newCredential.setId(UUID.randomUUID());
+        WebCredential newCredential = WebCredential
+                .builder()
+                .password(faker.internet().password())
+                .userName(faker.name().username())
+                .credentialName(faker.internet().domainName())
+                .id(UUID.randomUUID())
+                .build();
         Mockito.doReturn(newCredential).when(fetcher).findById(newCredential.getId());
         WebCredential credentialFound = target.findById(newCredential.getId());
         Assertions.assertEquals(newCredential,credentialFound);
