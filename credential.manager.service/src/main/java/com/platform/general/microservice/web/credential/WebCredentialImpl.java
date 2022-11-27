@@ -52,11 +52,7 @@ public class WebCredentialImpl implements WebCredentialService {
     }
 
     /**
-     * Search on the system the detail for a credential, based on the id received as parameter
-     *
-     * @param id     - UUID unique value use as filter for the search.
-     * @param userId
-     * @return the credential object found in the system with the id
+     *  {@inheritDoc}
      */
     @Override
     public WebCredential findById(UUID id, UUID userId) {
