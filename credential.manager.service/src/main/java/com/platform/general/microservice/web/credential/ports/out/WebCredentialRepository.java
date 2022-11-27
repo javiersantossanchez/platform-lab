@@ -45,7 +45,7 @@ public interface WebCredentialRepository {
      * @return
      *
      */
-    WebCredential findById(UUID id, UUID userId);
+    WebCredential findById(UUID credentialId, UUID userId);
 
     /**
      * @param id
