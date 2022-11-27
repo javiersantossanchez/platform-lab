@@ -8,10 +8,6 @@ public interface WebCredentialService {
 
     WebCredential createNewWebCredential(String password, String userName, String webSite, UUID userId);
 
-    default WebCredential findById(UUID id) {
-        return findById(id, UUID.randomUUID());
-    }
-
     WebCredential findById(UUID id, UUID userId);
 
     void deleteByID(UUID id);

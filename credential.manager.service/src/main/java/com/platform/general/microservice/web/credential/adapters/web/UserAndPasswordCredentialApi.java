@@ -33,7 +33,8 @@ public class UserAndPasswordCredentialApi {
 
     @GetMapping("/{credentialId}")
     ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
-        WebCredential credential = webCredential.findById(credentialId);
+        UserWrapper userWrapper = new UserWrapper(principal);
+        WebCredential credential = webCredential.findById(credentialId,userWrapper.getId());
         LOGGER.debug("The user search credential {}",credential);
         return ResponseEntity.ok(credential);
     }

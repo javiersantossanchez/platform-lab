@@ -10,6 +10,7 @@ import com.platform.general.microservice.web.credential.adapters.web.error.Error
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
+import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -84,10 +85,19 @@ class UserAndPasswordCredentialApiTests {
 	void searchCredentialWhenDoesNotExist() throws Exception {
 		WebCredentialNotFoundException expectedResponse = new WebCredentialNotFoundException();
 
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
 		MvcResult mvcResult = mockMvc.perform(
 				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,UUID.randomUUID())
 						.contentType(MediaType.APPLICATION_JSON)
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().is4xxClientError()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
@@ -97,10 +107,19 @@ class UserAndPasswordCredentialApiTests {
 	@Test
 	void searchCredentialWithInvalidId() throws Exception {
 
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
 		MvcResult mvcResult = mockMvc.perform(
 				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,"invalid-uuid")
 						.contentType(MediaType.APPLICATION_JSON)
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().is4xxClientError()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
@@ -109,19 +128,24 @@ class UserAndPasswordCredentialApiTests {
 
 	@Test
 	void searchCredentialWhenOk() throws Exception {
-		WebCredentialEntity entity = WebCredentialEntity.builder()
-										.credentialName(faker.company().name())
-										.userName(faker.name().username())
-										.password(faker.internet().password())
-										.creationTime(LocalDateTime.now())
-										.userId(UUID.randomUUID())
-										.build();
+
+		WebCredentialEntity entity = WebCredentialEntityMother.DummyRandomCredential();
 		entity = dao.save(entity);
+
+
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", entity.getUserId())
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
 
 		MvcResult mvcResult = mockMvc.perform(
 				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,entity.getId())
 						.contentType(MediaType.APPLICATION_JSON)
-						.with(jwt())
+						.with(jwt().jwt(jwt))
 		).andExpect(status().isOk()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		WebCredential credential = objectMapper.readValue(response, WebCredential.class);
