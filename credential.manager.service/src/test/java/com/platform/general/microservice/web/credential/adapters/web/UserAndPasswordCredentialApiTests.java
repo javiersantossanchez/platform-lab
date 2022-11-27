@@ -105,7 +105,36 @@ class UserAndPasswordCredentialApiTests {
 	}
 
 	@Test
-	void searchCredentialWithInvalidId() throws Exception {
+	void searchCredentialWhenBelongsToOtherUser() throws Exception {
+		WebCredentialNotFoundException expectedResponse = new WebCredentialNotFoundException();
+		WebCredentialEntity entityCreated = dao.save(WebCredentialEntityMother.DummyRandomCredential());
+		UUID idOfDifferentUser;
+		do{
+			idOfDifferentUser = UUID.randomUUID();
+		}while(idOfDifferentUser.equals(entityCreated.getUserId()));
+
+
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub",idOfDifferentUser)
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,entityCreated.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(jwt))
+		).andExpect(status().is4xxClientError()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+	}
+
+	@Test
+	void searchCredentialWithInvalidCredentialId() throws Exception {
 
 		Jwt jwt = Jwt.withTokenValue("token")
 				.header("alg", "none")
@@ -124,6 +153,30 @@ class UserAndPasswordCredentialApiTests {
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
 		Assertions.assertTrue(error.getErrorMessage().startsWith("Invalid value for "));
+	}
+
+	@Test
+	void searchCredentialWithInvalidUserId() throws Exception {
+
+		InvalidUserInformationException expectedException = new InvalidUserInformationException();
+
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "INVALID-USER-ID")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,UUID.randomUUID())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(jwt))
+		).andExpect(status().is4xxClientError()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(expectedException.getErrorMessage(),error.getErrorMessage());
 	}
 
 	@Test
