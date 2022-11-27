@@ -32,7 +32,7 @@ public interface WebCredentialRepository {
      * @return - Credential found on the datastore
      *
      */
-    WebCredential findById(UUID credentialId, UUID userId);
+    WebCredential findById(final UUID credentialId,final UUID userId);
 
     /**
      * @param id

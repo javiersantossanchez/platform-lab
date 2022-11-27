@@ -62,7 +62,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
      * {@inheritDoc}
      */
     @Override
-    public WebCredential findById(UUID credentialId, UUID userId) {
+    public WebCredential findById(final UUID credentialId,final UUID userId) {
         if(credentialId == null){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
         }
