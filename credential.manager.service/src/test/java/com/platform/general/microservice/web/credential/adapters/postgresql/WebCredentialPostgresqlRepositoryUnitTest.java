@@ -124,6 +124,11 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class,()->target.findById(null,UUID.randomUUID()));
     }
 
+    @Test
+    public void findCredentialByCredentialIdAndUserIdWithNullAsUserId(){
+        Assertions.assertThrows(EmptyUserIdException.class,()->target.findById(UUID.randomUUID(),null));
+    }
+
     @Test()
     public void findCredentialByIDWhenIdDoesNotExist(){
         UUID id = UUID.randomUUID();
