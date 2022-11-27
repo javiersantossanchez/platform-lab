@@ -62,6 +62,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
      * {@inheritDoc}
      */
     @Override
+    @Retryable(value = { WebCredentialSearchException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public WebCredential findById(final UUID credentialId,final UUID userId) {
         if(credentialId == null){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);

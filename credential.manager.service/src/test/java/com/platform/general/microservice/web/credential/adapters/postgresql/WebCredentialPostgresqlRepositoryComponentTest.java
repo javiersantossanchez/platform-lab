@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialDeleteException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Testcontainers
@@ -96,5 +98,26 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
         Mockito.verify(repo,Mockito.times(1)).deleteById(id);
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    @Test
+    public void findCredentialByCredentialIdAndUserIdWithRetryOnDatabaseError(){
+        UUID credentialId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        Mockito.doThrow(RuntimeException.class).when(repo).findOneByIdAndUserId(credentialId,userId);
 
+        Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(credentialId,userId));
+        Mockito.verify(repo,Mockito.times(3)).findOneByIdAndUserId(credentialId,userId);
+    }
+
+    @Test
+    public void findCredentialByCredentialIdAndUserIdWithNoneRetryOnNotFoundError(){
+        UUID credentialId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        Mockito.doReturn(Optional.ofNullable(null)).when(repo).findOneByIdAndUserId(credentialId,userId);
+
+        Assertions.assertThrows(WebCredentialNotFoundException.class,()->target.findById(credentialId,userId));
+        Mockito.verify(repo,Mockito.times(1)).findOneByIdAndUserId(credentialId,userId);
+    }
 }
