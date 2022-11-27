@@ -45,7 +45,6 @@ public interface WebCredentialRepository {
      * @return
      *
      */
-    //TODO: Review when the IllegalArgumentException is thrown
     WebCredential findById(UUID id, UUID userId);
 
     /**
