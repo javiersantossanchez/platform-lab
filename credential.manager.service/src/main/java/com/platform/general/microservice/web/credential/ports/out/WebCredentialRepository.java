@@ -24,19 +24,6 @@ public interface WebCredentialRepository {
      */
     WebCredential save(String password, String userName, String webSite, LocalDateTime creationDate, UUID userId);
 
-
-    /**
-     *
-     * @exception WebCredentialSearchException - A error its generated during the searching
-     * @exception IllegalArgumentException - when @id has invalid value
-     * @exception WebCredentialNotFoundException - The id does not exist on the system
-     * @return
-     *
-     */
-    default WebCredential findById(UUID id) {
-        return findById(id, null);
-    }
-
     /**
      *
      * @exception WebCredentialSearchException - When a problem is generated on searching
