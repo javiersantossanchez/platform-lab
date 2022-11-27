@@ -39,10 +39,10 @@ public interface WebCredentialRepository {
 
     /**
      *
-     * @exception WebCredentialSearchException - A error its generated during the searching
-     * @exception IllegalArgumentException - when @id has invalid value
-     * @exception WebCredentialNotFoundException - The id does not exist on the system
-     * @return
+     * @exception WebCredentialSearchException - When a problem is generated on searching
+     * @exception IllegalArgumentException - When {@code credentialId} has invalid value
+     * @exception WebCredentialNotFoundException - When The {@code credentialId} does not exist on the system
+     * @return - Credential found on the datastore
      *
      */
     WebCredential findById(UUID credentialId, UUID userId);
