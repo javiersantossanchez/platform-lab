@@ -3,6 +3,7 @@ package com.platform.general.microservice.web.credential;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
 import com.platform.general.microservice.web.credential.exceptions.EmptyUserIdException;
+import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
@@ -56,4 +57,10 @@ public class WebCredentialFetcherTest {
     public void findCredentialWithNullAsUserId(){
         Assertions.assertThrows(EmptyUserIdException.class,()->target.findById(UUID.randomUUID(),null));
     }
+
+    @Test()
+    public void findCredentialWithNullAsCredentialId(){
+        Assertions.assertThrows(IllegalArgumentException.class,()->target.findById(null,UUID.randomUUID()));
+    }
+
 }
