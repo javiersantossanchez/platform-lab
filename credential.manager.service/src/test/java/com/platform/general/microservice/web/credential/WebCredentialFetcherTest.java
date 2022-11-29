@@ -2,6 +2,7 @@ package com.platform.general.microservice.web.credential;
 
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
+import com.platform.general.microservice.web.credential.exceptions.EmptyUserIdException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
@@ -49,5 +50,10 @@ public class WebCredentialFetcherTest {
         UUID userId = UUID.randomUUID();
         Mockito.doThrow(new WebCredentialNotFoundException()).when(repository).findById(credentialId,userId);
         Assertions.assertThrows(WebCredentialNotFoundException.class,()-> target.findById(credentialId,userId));
+    }
+
+    @Test
+    public void findCredentialWithNullAsUserId(){
+        Assertions.assertThrows(EmptyUserIdException.class,()->target.findById(UUID.randomUUID(),null));
     }
 }

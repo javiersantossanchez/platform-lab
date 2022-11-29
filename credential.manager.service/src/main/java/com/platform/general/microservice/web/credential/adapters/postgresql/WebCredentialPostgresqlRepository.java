@@ -67,9 +67,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         if(credentialId == null){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
         }
-        if(userId == null){
-            throw new EmptyUserIdException();
-        }
+
         WebCredentialEntity newEntity = null;
         try {
             newEntity = dao.findOneByIdAndUserId(credentialId, userId).orElse(null);
