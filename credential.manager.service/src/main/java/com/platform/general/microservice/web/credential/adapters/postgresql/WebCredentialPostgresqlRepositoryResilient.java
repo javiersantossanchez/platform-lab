@@ -9,10 +9,10 @@ import java.util.UUID;
 
 @Service
 public class WebCredentialPostgresqlRepositoryResilient {
-    private WebCredentialDao dao;
+    private final WebCredentialDao dao;
 
     @Autowired
-    public WebCredentialPostgresqlRepositoryResilient(WebCredentialDao dao) {
+    public WebCredentialPostgresqlRepositoryResilient(final WebCredentialDao dao) {
         this.dao = dao;
     }
 
