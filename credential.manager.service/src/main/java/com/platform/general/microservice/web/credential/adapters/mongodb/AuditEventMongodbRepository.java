@@ -1,7 +1,6 @@
 package com.platform.general.microservice.web.credential.adapters.mongodb;
 
 import com.platform.general.microservice.web.credential.AuditEvent;
-import com.platform.general.microservice.web.credential.AuditEventRegister;
 import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
 import com.platform.general.microservice.web.credential.exceptions.IllegalAuditEventValueException;
 import com.platform.general.microservice.web.credential.ports.out.AuditEventRepository;

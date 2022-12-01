@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialDeleteException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,7 +21,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Testcontainers

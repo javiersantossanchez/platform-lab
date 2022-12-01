@@ -18,7 +18,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,7 +1,6 @@
 package com.platform.general.microservice.web.credential;
 
 import com.github.javafaker.Faker;
-import com.platform.general.microservice.web.credential.exceptions.AuditEventRegistrationException;
 import com.platform.general.microservice.web.credential.exceptions.EmptyUserIdException;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;

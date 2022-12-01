@@ -2,7 +2,6 @@ package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
