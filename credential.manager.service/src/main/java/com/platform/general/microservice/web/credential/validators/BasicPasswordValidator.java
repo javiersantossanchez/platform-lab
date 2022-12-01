@@ -35,9 +35,6 @@ public class BasicPasswordValidator implements PasswordValidator {
         if(!StringUtils.isAlphanumeric(password)){
             return false;
         }
-        if(password.length() <= 10){
-            return false;
-        }
-        return true;
+        return password.length() > 10;
     }
 }
