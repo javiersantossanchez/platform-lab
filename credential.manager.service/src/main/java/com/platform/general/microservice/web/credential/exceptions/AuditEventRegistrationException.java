@@ -11,7 +11,7 @@ public class AuditEventRegistrationException extends RuntimeException {
     }
 
     public String getErrorMessage(){
-        return String.format("An error was generated during the Audit Event information");
+        return "An error was generated during the Audit Event information";
     }
 
 }

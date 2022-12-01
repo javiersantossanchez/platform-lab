@@ -11,7 +11,7 @@ public class WebCredentialSearchNotAvailableException extends RuntimeException {
     }
 
     public String getErrorMessage(){
-        return String.format("Search the credential functionality is not available");
+        return "Search the credential functionality is not available";
     }
 
 }

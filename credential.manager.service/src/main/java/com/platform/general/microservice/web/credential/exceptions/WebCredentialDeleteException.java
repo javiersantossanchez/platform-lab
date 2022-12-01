@@ -11,7 +11,7 @@ public class WebCredentialDeleteException extends RuntimeException {
     }
 
     public String getErrorMessage(){
-        return String.format("An error to delete the credential");
+        return "An error to delete the credential";
     }
 
 }

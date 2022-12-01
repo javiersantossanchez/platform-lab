@@ -11,7 +11,7 @@ public class WebCredentialRegistrationException extends RuntimeException {
     }
 
     public String getErrorMessage() {
-        return String.format("An error was generated during the credential creation");
+        return "An error was generated during the credential creation";
     }
 
 }

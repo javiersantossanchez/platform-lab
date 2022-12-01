@@ -11,7 +11,7 @@ public class WebCredentialSearchException extends RuntimeException {
     }
 
     public String getErrorMessage(){
-        return String.format("An error was generated to search the credential");
+        return "An error was generated to search the credential";
     }
 
 }

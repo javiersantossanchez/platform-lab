@@ -11,7 +11,7 @@ public class WebCredentialNotFoundException extends RuntimeException {
     }
 
     public String getErrorMessage(){
-        return String.format("The credential does not exist");
+        return "The credential does not exist";
     }
 
 }
