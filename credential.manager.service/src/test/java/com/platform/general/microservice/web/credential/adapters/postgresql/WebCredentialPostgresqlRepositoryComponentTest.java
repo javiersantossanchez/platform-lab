@@ -97,27 +97,4 @@ public class WebCredentialPostgresqlRepositoryComponentTest {
 
         Mockito.verify(repo,Mockito.times(1)).deleteById(id);
     }
-
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    @Test
-    public void findCredentialByCredentialIdAndUserIdWithRetryOnDatabaseError(){
-        UUID credentialId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        Mockito.doThrow(RuntimeException.class).when(repo).findOneByIdAndUserId(credentialId,userId);
-
-        Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(credentialId,userId));
-        Mockito.verify(repo,Mockito.times(3)).findOneByIdAndUserId(credentialId,userId);
-    }
-
-    @Test
-    public void findCredentialByCredentialIdAndUserIdWithNoneRetryOnNotFoundError(){
-        UUID credentialId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        Mockito.doReturn(Optional.ofNullable(null)).when(repo).findOneByIdAndUserId(credentialId,userId);
-
-        Assertions.assertThrows(WebCredentialNotFoundException.class,()->target.findById(credentialId,userId));
-        Mockito.verify(repo,Mockito.times(1)).findOneByIdAndUserId(credentialId,userId);
-    }
 }

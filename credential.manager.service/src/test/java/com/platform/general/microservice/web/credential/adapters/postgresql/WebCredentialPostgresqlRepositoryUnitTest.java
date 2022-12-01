@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
 
     @Mock
     private WebCredentialDao repo;
+
+    @Mock
+    private WebCredentialPostgresqlRepositoryResilient repoResilient;
 
 
     @Test()
@@ -124,7 +128,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
     public void findCredentialByIDWhenIdDoesNotExist(){
         UUID id = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        Mockito.doReturn(Optional.ofNullable(null)).when(repo).findOneByIdAndUserId(id,userId);
+        Mockito.doReturn(null).when(repoResilient).find(id,userId);
         Assertions.assertThrows(WebCredentialNotFoundException.class,()->target.findById(id,userId));
     }
 
@@ -132,10 +136,20 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
     public void findCredentialByIDWhenDatabaseErrorIsThrown(){
         UUID id = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        Mockito.doThrow(RuntimeException.class).when(repo).findOneByIdAndUserId(id,userId);
+        Mockito.doThrow(RuntimeException.class).when(repoResilient).find(id,userId);
 
         Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(id,userId));
     }
+
+    @Test()
+    public void findCredentialByIDWhenCallNotPermittedExceptionIsThrown(){
+        UUID id = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        Mockito.doThrow(CallNotPermittedException.class).when(repoResilient).find(id,userId);
+
+        Assertions.assertThrows(WebCredentialSearchNotAvailableException.class,()->target.findById(id,userId));
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////

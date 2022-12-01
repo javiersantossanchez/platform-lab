@@ -4,6 +4,7 @@ import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,9 +21,12 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
 
     private WebCredentialDao dao;
 
+    private WebCredentialPostgresqlRepositoryResilient repositoryResilient;
+
     @Autowired
-    public WebCredentialPostgresqlRepository(WebCredentialDao dao) {
+    public WebCredentialPostgresqlRepository(WebCredentialDao dao,WebCredentialPostgresqlRepositoryResilient repositoryResilient) {
         this.dao = dao;
+        this.repositoryResilient = repositoryResilient;
     }
 
     /**
@@ -57,18 +61,16 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
     }
 
     /**
-     * TODO: review the retry functionality
-     *
      * {@inheritDoc}
      */
     @Override
-    @Retryable(value = { WebCredentialSearchException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public WebCredential findById(final UUID credentialId,final UUID userId) {
-
 
         WebCredentialEntity newEntity = null;
         try {
-            newEntity = dao.findOneByIdAndUserId(credentialId, userId).orElse(null);
+            newEntity = repositoryResilient.find(credentialId, userId);
+        }catch(CallNotPermittedException ex){
+            throw new WebCredentialSearchNotAvailableException(ex);
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
         }
