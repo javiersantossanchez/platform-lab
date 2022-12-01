@@ -46,8 +46,6 @@ public class AuditEventMongodbRepository implements AuditEventRepository {
             eventDb = repo.save(eventDb);
         }catch (Exception exception){
             throw new AuditEventRegistrationException(exception);
-        }catch (Throwable t){
-
         }
         return AuditEvent.builder()
                 .eventDate(eventDb.getEventDate())
