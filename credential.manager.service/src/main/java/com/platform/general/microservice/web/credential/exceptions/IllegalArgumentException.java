@@ -15,9 +15,9 @@ public class IllegalArgumentException extends RuntimeException {
         DUPLICATED
     }
 
-    private Argument argument;
+    private final Argument argument;
 
-    private Validation validationFailed;
+    private final Validation validationFailed;
 
     public IllegalArgumentException(Argument argument, Validation validationFailed) {
         this.argument = argument;

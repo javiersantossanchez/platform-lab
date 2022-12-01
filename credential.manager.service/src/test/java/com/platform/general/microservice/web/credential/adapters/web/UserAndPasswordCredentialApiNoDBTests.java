@@ -5,6 +5,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ class UserAndPasswordCredentialApiNoDBTests {
 	@Autowired
 	private WebCredentialDao dao;
 
+	@Autowired
+	private CircuitBreakerRegistry circuitBreakerRegistry;
+
 	@DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
@@ -73,6 +77,8 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 	@Test
 	void searchCredentialWhenGeneralErrorIsThrown() throws Exception {
+		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
+				.transitionToClosedState();
 		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
 
 		postgreSQLDBContainer.stop();
@@ -97,6 +103,8 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 	@Test
 	void searchCredentialWhenServiceNotAvailableIsThrown() throws Exception {
+		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
+				.transitionToClosedState();
 		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
 
 		postgreSQLDBContainer.stop();

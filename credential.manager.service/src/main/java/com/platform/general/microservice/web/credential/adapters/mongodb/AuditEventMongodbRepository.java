@@ -19,9 +19,9 @@ public class AuditEventMongodbRepository implements AuditEventRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuditEventMongodbRepository.class);
 
-    private AuditEventMongodbDao repo;
+    private final AuditEventMongodbDao repo;
 
-    private DateManager dateManager;
+    private final DateManager dateManager;
 
     @Autowired
     public AuditEventMongodbRepository(AuditEventMongodbDao repo, DateManager dateManager) {

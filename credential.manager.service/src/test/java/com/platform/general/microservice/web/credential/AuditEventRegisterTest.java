@@ -27,7 +27,7 @@ public class AuditEventRegisterTest {
     @Mock
     AuditEventRepository auditEventRepository;
 
-    private DateManager dateManager = new DateManager();
+    private final DateManager dateManager = new DateManager();
 
     @Test()
     public void createWhenOK() throws ExecutionException, InterruptedException {

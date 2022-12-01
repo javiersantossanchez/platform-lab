@@ -10,9 +10,9 @@ public class IllegalAuditEventValueException extends RuntimeException {
         NOT_EMPTY
     }
 
-    private Argument argument;
+    private final Argument argument;
 
-    private Validation validationFailed;
+    private final Validation validationFailed;
 
     public IllegalAuditEventValueException(Argument argument, Validation validationFailed) {
         this.argument = argument;

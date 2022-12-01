@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 class BasicPasswordValidatorTest {
 
-    private BasicPasswordValidator target = new BasicPasswordValidator();
+    private final BasicPasswordValidator target = new BasicPasswordValidator();
 
     @ParameterizedTest
     @NullSource

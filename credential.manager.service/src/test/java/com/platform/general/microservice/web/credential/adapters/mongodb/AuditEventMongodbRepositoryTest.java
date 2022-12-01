@@ -27,7 +27,7 @@ public class AuditEventMongodbRepositoryTest {
     @Mock
     private AuditEventMongodbDao repo;
 
-    private DateManager dateManager = new DateManager();
+    private final DateManager dateManager = new DateManager();
 
     @BeforeEach
     public void setup(){
