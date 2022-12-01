@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoCo
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -71,7 +72,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 
 	@Test
-	void searchCredentialWhenDoesNotExist() throws Exception {
+	void searchCredentialWhenGeneralErrorIsThrown() throws Exception {
 		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
 
 		postgreSQLDBContainer.stop();
@@ -92,6 +93,34 @@ class UserAndPasswordCredentialApiNoDBTests {
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
 		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+	}
+
+	@Test
+	void searchCredentialWhenServiceNotAvailableIsThrown() throws Exception {
+		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
+
+		postgreSQLDBContainer.stop();
+
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+		mockMvc.perform(
+				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,UUID.randomUUID())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(jwt))
+		).andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,UUID.randomUUID())
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(jwt))
+		).andExpect(status().is(HttpStatus.SERVICE_UNAVAILABLE.value())).andReturn();
+
 	}
 
 

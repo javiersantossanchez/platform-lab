@@ -1,9 +1,7 @@
 package com.platform.general.microservice.web.credential.adapters.web.error;
 
+import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
-import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,5 +35,10 @@ public class ErrorHandler {
     public ResponseEntity asdds(MethodArgumentTypeMismatchException exception) {
         String error = "Invalid value for "+exception.getName();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(error));
+    }
+
+    @ExceptionHandler({WebCredentialSearchNotAvailableException.class})
+    public ResponseEntity searchNotAvailable(WebCredentialSearchNotAvailableException exception) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(exception.getErrorMessage()));
     }
 }
