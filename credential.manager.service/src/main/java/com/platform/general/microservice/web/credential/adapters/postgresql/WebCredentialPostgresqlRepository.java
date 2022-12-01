@@ -19,18 +19,19 @@ import java.util.UUID;
 @Service("postgresql")
 public class WebCredentialPostgresqlRepository implements WebCredentialRepository {
 
-    private WebCredentialDao dao;
+    private final WebCredentialDao dao;
 
-    private WebCredentialPostgresqlRepositoryResilient repositoryResilient;
+    private final WebCredentialPostgresqlRepositoryResilient repositoryResilient;
 
     @Autowired
-    public WebCredentialPostgresqlRepository(WebCredentialDao dao,WebCredentialPostgresqlRepositoryResilient repositoryResilient) {
+    public WebCredentialPostgresqlRepository(final WebCredentialDao dao,final WebCredentialPostgresqlRepositoryResilient repositoryResilient) {
         this.dao = dao;
         this.repositoryResilient = repositoryResilient;
     }
 
     /**
      * {@inheritDoc}
+     * TODO: review the retry functionality
      */
     @Override
     @Retryable(value = { WebCredentialRegistrationException.class }, maxAttempts = 3, backoff = @Backoff(delay = 3000))
