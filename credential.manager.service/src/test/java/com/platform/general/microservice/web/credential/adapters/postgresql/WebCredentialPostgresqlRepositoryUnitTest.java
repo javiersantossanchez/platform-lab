@@ -155,7 +155,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
     //////////////////////////////////////////////////////////////////////////////////////////
     @Test()
     public void deleteCredentialByIDWithNull(){
-        Assertions.assertThrows(IllegalArgumentException.class,()->{target.deleteById(null);});
+        Assertions.assertThrows(IllegalArgumentException.class,()-> target.deleteById(null));
     }
 
     @Test()

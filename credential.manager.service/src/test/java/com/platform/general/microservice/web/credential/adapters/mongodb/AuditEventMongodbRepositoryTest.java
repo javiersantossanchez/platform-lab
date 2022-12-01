@@ -35,7 +35,7 @@ public class AuditEventMongodbRepositoryTest {
 
     @Test()
     public void registerAuditEventWithNUllType(){
-        IllegalAuditEventValueException exception = Assertions.assertThrows(IllegalAuditEventValueException.class,()->{target.registerAuditEvent(null);});
+        IllegalAuditEventValueException exception = Assertions.assertThrows(IllegalAuditEventValueException.class,()-> target.registerAuditEvent(null));
         Assertions.assertEquals(IllegalAuditEventValueException.Argument.TYPE,exception.getArgument());
         Assertions.assertEquals(IllegalAuditEventValueException.Validation.NOT_EMPTY,exception.getValidationFailed());
     }
@@ -43,7 +43,7 @@ public class AuditEventMongodbRepositoryTest {
     @Test()
     public void registerAuditEventWhenAnExceptionIsThrowByMongodbAccess(){
         Mockito.doThrow(new RuntimeException()).when(repo).save(Mockito.any(Events.class));
-        Assertions.assertThrows(AuditEventRegistrationException.class,()->{target.registerAuditEvent(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL);});
+        Assertions.assertThrows(AuditEventRegistrationException.class,()->target.registerAuditEvent(AuditEvent.AuditEventType.SEARCH_WEB_CREDENTIAL));
     }
 
     @Test()
