@@ -66,16 +66,6 @@ public class WebCredentialImplTest {
     @ParameterizedTest
     @NullSource
     @EmptySource
-    public void createNewCredentialWhenEmptyPassword(String password){
-
-        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->target.createNewWebCredential(password, faker.name().username(), faker.internet().domainName(),UUID.randomUUID()));
-        Assertions.assertEquals(IllegalArgumentException.Argument.PASSWORD,exception.getArgument());
-        Assertions.assertEquals(IllegalArgumentException.Validation.NOT_EMPTY,exception.getValidationFailed());
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @EmptySource
     public void createNewCredentialWhenEmptyUserName(String userName){
 
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class,()->target.createNewWebCredential(faker.internet().password(), userName, faker.internet().domainName(),UUID.randomUUID()));
