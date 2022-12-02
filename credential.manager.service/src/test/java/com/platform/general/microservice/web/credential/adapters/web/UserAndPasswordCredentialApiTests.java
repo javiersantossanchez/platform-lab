@@ -8,6 +8,7 @@ import com.platform.general.microservice.web.credential.adapters.postgresql.WebC
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
@@ -22,6 +23,7 @@ import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoCo
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -215,6 +217,7 @@ class UserAndPasswordCredentialApiTests {
 	@NullSource
 	@EmptySource
 	void createCredentialWhenEmptyPassword(String password) throws Exception {
+
 		WebCredentialParam body = new WebCredentialParam();
 		body.setPassword(password);
 		body.setUserName(faker.name().username());
@@ -230,12 +233,44 @@ class UserAndPasswordCredentialApiTests {
 				.build();
 
 
-		mockMvc.perform(
+		MvcResult mvcResult = mockMvc.perform(
 				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsBytes(body))
 						.with(jwt().jwt(jwt))
-		).andExpect(status().is(400));
+		).andExpect(status().is(400)).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(new IllegalArgumentException(IllegalArgumentException.Argument.PASSWORD,IllegalArgumentException.Validation.NOT_EMPTY).getErrorMessage(),error.getErrorMessage());
+	}
+
+	@Test
+	void createCredentialWithInvalidPassword() throws Exception {
+
+		WebCredentialParam body = new WebCredentialParam();
+		body.setPassword("invalid-password");
+		body.setUserName(faker.name().username());
+		body.setCredentialName(faker.internet().domainName());
+
+		Jwt jwt = Jwt.withTokenValue("token")
+				.header("alg", "none")
+				.claim("sub", "f2411d84-19a9-4f24-89e0-68aab1490e99")
+				.claim("scope", "openid profile email")
+				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
+				.claim("given_name", "javier")
+				.claim("family_name", "santos")
+				.build();
+
+
+		MvcResult mvcResult = mockMvc.perform(
+				post("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(body))
+						.with(jwt().jwt(jwt))
+		).andExpect(status().is(HttpStatus.BAD_REQUEST.value())).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(InvalidPasswordException.errorMessage,error.getErrorMessage());
 	}
 
 	@ParameterizedTest

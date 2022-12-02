@@ -41,4 +41,9 @@ public class ErrorHandler {
     public ResponseEntity searchNotAvailable(WebCredentialSearchNotAvailableException exception) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(exception.getErrorMessage()));
     }
+
+    @ExceptionHandler({InvalidPasswordException.class})
+    public ResponseEntity searchNotAvailable(InvalidPasswordException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
+    }
 }
