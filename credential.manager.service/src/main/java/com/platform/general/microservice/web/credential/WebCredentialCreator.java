@@ -33,9 +33,7 @@ public class WebCredentialCreator implements IWebCredentialCreator {
 
     @Override
     public WebCredential create(String password, String userName, String webSite, UUID userId) {
-        if(StringUtils.isBlank(password)){
-            throw new IllegalArgumentException(IllegalArgumentException.Argument.PASSWORD, IllegalArgumentException.Validation.NOT_EMPTY);
-        }
+
         if(StringUtils.isBlank(userName)){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.USER_NAME, IllegalArgumentException.Validation.NOT_EMPTY);
         }

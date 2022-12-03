@@ -241,7 +241,7 @@ class UserAndPasswordCredentialApiTests {
 		).andExpect(status().is(400)).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
-		Assertions.assertEquals(new IllegalArgumentException(IllegalArgumentException.Argument.PASSWORD,IllegalArgumentException.Validation.NOT_EMPTY).getErrorMessage(),error.getErrorMessage());
+		Assertions.assertEquals(InvalidPasswordException.errorMessage,error.getErrorMessage());
 	}
 
 	@Test
