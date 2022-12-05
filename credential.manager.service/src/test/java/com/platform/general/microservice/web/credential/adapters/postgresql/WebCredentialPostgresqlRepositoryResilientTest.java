@@ -11,6 +11,9 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -83,4 +86,33 @@ public class WebCredentialPostgresqlRepositoryResilientTest {
         Assertions.assertThrows(CannotCreateTransactionException.class,()->target.find(credentialId,userId));
         Mockito.verify(repo,Mockito.times(6)).findOneByIdAndUserId(credentialId,userId);
     }
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    @Test
+    public void findCredentialByUserIdWithCircuitBreakerOnDatabaseError(){
+        circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
+                .transitionToClosedState();
+        UUID userId = UUID.randomUUID();
+        Pageable sortedByName =
+                PageRequest.of(0, 10, Sort.by("credentialName"));
+        Mockito.doThrow(new CannotCreateTransactionException("Mock Error")).when(repo).findByUserId(userId,sortedByName);
+        Assertions.assertThrows(RuntimeException.class,()->target.findByUserId(userId,sortedByName));
+        Mockito.verify(repo,Mockito.times(3)).findByUserId(userId,sortedByName);
+    }
+
+    @Test
+    public void findCredentialByUserIdWithRetryOnDatabaseError(){
+        circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
+                .transitionToClosedState();
+        UUID userId = UUID.randomUUID();
+        Pageable sortedByName =
+                PageRequest.of(0, 10, Sort.by("credentialName"));
+        Mockito.doThrow(new CannotCreateTransactionException("Mock Error")).when(repo).findByUserId(userId,sortedByName);
+        Assertions.assertThrows(CannotCreateTransactionException.class,()->target.findByUserId(userId,sortedByName));
+        Assertions.assertThrows(CallNotPermittedException.class,()->target.findByUserId(userId,sortedByName));
+        Assertions.assertThrows(CallNotPermittedException.class,()->target.findByUserId(userId,sortedByName));
+        Mockito.verify(repo,Mockito.times(5)).findByUserId(userId,sortedByName);
+    }
+
 }

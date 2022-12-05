@@ -12,6 +12,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -20,6 +23,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -250,5 +254,51 @@ public class WebCredentialDaoTest  {
         Assertions.assertThrows(EmptyResultDataAccessException.class,()-> repository.deleteById(UUID.randomUUID()));
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void findAllCredentialByIDAndUserIDWhenOk(){
+        UUID userId1 = UUID.randomUUID();
+        UUID userId2 = UUID.randomUUID();
+        List<WebCredentialEntity> credentialListByUser1 = WebCredentialEntityMother.multipleDummyRandomCredential(5,userId1);
+        List<WebCredentialEntity> credentialListByUser2 = WebCredentialEntityMother.multipleDummyRandomCredential(1,userId2);
+
+        credentialListByUser1.parallelStream().forEach(currentCredential -> repository.save(currentCredential));
+        credentialListByUser2.parallelStream().forEach(currentCredential -> repository.save(currentCredential));
+
+        Pageable sortedByName =
+                PageRequest.of(0, 10, Sort.by("credentialName"));
+        List<WebCredentialEntity> entitiesFound = repository.findByUserId(userId1,sortedByName);
+        Assertions.assertNotNull(entitiesFound);
+        Assertions.assertFalse(entitiesFound.isEmpty());
+        Assertions.assertEquals(credentialListByUser1.size(),entitiesFound.size());
+    }
+
+
+    @Test
+    public void findAllCredentialByIDAndUserIDWhenThereAreNotCredentials(){
+        UUID userId1 = UUID.randomUUID();
+        UUID userId2 = UUID.randomUUID();
+        List<WebCredentialEntity> credentialListByUser1 = WebCredentialEntityMother.multipleDummyRandomCredential(1,userId1);
+        credentialListByUser1.parallelStream().forEach(currentCredential -> repository.save(currentCredential));
+
+        Pageable sortedByName =
+                PageRequest.of(0, 10, Sort.by("credentialName"));
+        List<WebCredentialEntity> entitiesFound = repository.findByUserId(userId2,sortedByName);
+        Assertions.assertNotNull(entitiesFound);
+        Assertions.assertTrue(entitiesFound.isEmpty());
+    }
+
+    @Test
+    public void findAllCredentialByIDAndUserIDWhenUserIdIsNull(){
+
+        Pageable sortedByName =
+                PageRequest.of(0, 10, Sort.by("credentialName"));
+        List<WebCredentialEntity> entitiesFound = repository.findByUserId(null,sortedByName);
+        Assertions.assertNotNull(entitiesFound);
+        Assertions.assertTrue(entitiesFound.isEmpty());
+    }
 
 }
