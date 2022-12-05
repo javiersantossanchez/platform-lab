@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.utils.PagingContext;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
@@ -171,6 +172,17 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Mockito.doThrow(RuntimeException.class).when(repo).deleteById(id);
 
         Assertions.assertThrows(WebCredentialDeleteException.class,()->target.deleteById(id));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void findCredentialByUserIdWithPagingContextAsNull(){
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = null;
+        Assertions.assertThrows(EmptyPagingParameterException.class,()->target.findById(userId,paging));
     }
 
 }

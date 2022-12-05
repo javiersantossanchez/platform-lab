@@ -4,17 +4,23 @@ import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import com.platform.general.microservice.web.credential.utils.PagingContext;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service("postgresql")
 public class WebCredentialPostgresqlRepository implements WebCredentialRepository {
@@ -81,6 +87,29 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         return buildWebCredential(newEntity);
     }
 
+
+    public List<WebCredential> findById(final UUID userId, PagingContext paging) {
+
+        if(paging == null){
+            throw new EmptyPagingParameterException();
+        }
+
+        List<WebCredentialEntity> newEntity = new ArrayList<>();
+        Pageable pageable = PageRequest.of(paging.getPageNumber(), paging.getPageSize());
+
+        try {
+            newEntity = repositoryResilient.findByUserId(userId,pageable);
+        }catch(CallNotPermittedException ex){
+            throw new WebCredentialSearchNotAvailableException(ex);
+        }catch (RuntimeException ex){
+            throw new WebCredentialSearchException(ex);
+        }
+        if(newEntity == null){
+            throw new WebCredentialNotFoundException();
+        }
+        return buildWebCredential(newEntity);
+    }
+
     /**
      * TODO: review the retry functionality
      *
@@ -101,6 +130,10 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         }
     }
 
+
+    private List<WebCredential> buildWebCredential(List<WebCredentialEntity> entityList){
+        return entityList.stream().map(current -> this.buildWebCredential(current)).collect(Collectors.toList());
+    }
     private WebCredential buildWebCredential(WebCredentialEntity entity){
         if(entity == null){
             return null;
