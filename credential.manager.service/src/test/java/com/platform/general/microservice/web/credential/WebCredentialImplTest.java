@@ -2,6 +2,8 @@ package com.platform.general.microservice.web.credential;
 
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.test.utils.WebCredentialMother;
+import com.platform.general.microservice.web.credential.utils.PagingContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -97,6 +100,17 @@ public class WebCredentialImplTest {
         WebCredential credentialFound = target.findById(newCredential.getId(),userId);
         Assertions.assertEquals(newCredential,credentialFound);
     }
+
+    @Test
+    public void findCredentialByUserIdWhenOk(){
+        PagingContext paging = PagingContext.builder().pageNumber(1).pageSize(5).build();
+        UUID userId = UUID.randomUUID();
+        List<WebCredential> newCredential = WebCredentialMother.multipleDummyRandomFullCredential(5,userId);
+        Mockito.doReturn(newCredential).when(fetcher).findByUserId(userId,paging);
+        List<WebCredential> credentialFound = target.findByUserId(userId,paging);
+        Assertions.assertEquals(newCredential,credentialFound);
+    }
+
 
     @Test
     public void deleteCredentialWhenOk(){
