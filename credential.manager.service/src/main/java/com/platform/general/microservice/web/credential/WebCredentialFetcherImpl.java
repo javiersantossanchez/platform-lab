@@ -1,7 +1,6 @@
 package com.platform.general.microservice.web.credential;
 
 import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
-import com.platform.general.microservice.web.credential.exceptions.EmptyUserIdException;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
@@ -26,7 +25,7 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
     @Override
     public WebCredential findById(final UUID id, final UUID userId) {
         if(userId == null){
-            throw new EmptyUserIdException();
+            throw new InvalidUserInformationException();
         }
         if(id == null){
             throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
