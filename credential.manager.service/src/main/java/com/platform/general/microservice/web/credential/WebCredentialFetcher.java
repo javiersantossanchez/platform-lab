@@ -6,9 +6,6 @@ import com.platform.general.microservice.web.credential.exceptions.WebCredential
 import java.util.UUID;
 
 public interface WebCredentialFetcher {
-    default WebCredential findById(UUID id) {
-        return findById(id, UUID.randomUUID());
-    }
 
     /**
      *
