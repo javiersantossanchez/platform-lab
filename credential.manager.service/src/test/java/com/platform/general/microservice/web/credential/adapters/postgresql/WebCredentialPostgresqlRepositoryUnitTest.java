@@ -215,4 +215,26 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Mockito.verify(repoResilient,Mockito.times(1)).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
         Assertions.assertEquals(webCredentialEntityList.size(),credentialList.size());
     }
+
+    @Test
+    public void findCredentialByUserIdWhenCallNotPermittedExceptionIsThrown(){
+        int pageSize =5;
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = PagingContext.builder().pageNumber(0).pageSize(pageSize).build();
+
+        Mockito.doThrow(CallNotPermittedException.class).when(repoResilient).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
+
+        Assertions.assertThrows(WebCredentialSearchNotAvailableException.class,()->target.findById(userId,paging));
+    }
+
+    @Test
+    public void findCredentialByUserIdWhenDatabaseErrorIsThrown(){
+        int pageSize =5;
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = PagingContext.builder().pageNumber(0).pageSize(pageSize).build();
+        Mockito.doThrow(RuntimeException.class).when(repoResilient).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
+
+        Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(userId,paging));
+    }
+
 }
