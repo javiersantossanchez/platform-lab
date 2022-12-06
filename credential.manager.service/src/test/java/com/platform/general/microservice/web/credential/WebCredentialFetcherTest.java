@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import com.platform.general.microservice.web.credential.utils.PagingContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,9 +66,16 @@ public class WebCredentialFetcherTest {
     //////////////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void findCredentialWithUserIdAsNull(){
+    public void findCredentialByUserWithUserIdAsNull(){
         Assertions.assertThrows(InvalidUserInformationException.class,()->target.findByUserId(null,null));
     }
 
+    @Test
+    public void findCredentialByUserWhenAnErrorGeneratedOnSearch(){
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = PagingContext.builder().pageNumber(1).pageSize(5).build();
+        Mockito.doThrow(new WebCredentialSearchException()).when(repository).findById(userId,paging);
+        Assertions.assertThrows(WebCredentialSearchException.class,()-> target.findByUserId(userId,paging));
+    }
 
 }
