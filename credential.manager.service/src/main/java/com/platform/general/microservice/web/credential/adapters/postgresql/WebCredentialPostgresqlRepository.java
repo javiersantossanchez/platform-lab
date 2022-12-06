@@ -93,19 +93,22 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         if(paging == null){
             throw new EmptyPagingParameterException();
         }
+        if(paging.getPageNumber() < 0){
+            throw new InvalidArgumentException(InvalidArgumentException.Error.PAGE_NUMBER_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO);
+        }
+        if(paging.getPageSize()< 1){
+            throw new InvalidArgumentException(InvalidArgumentException.Error.PAGE_SIZE_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO);
+        }
 
-        List<WebCredentialEntity> newEntity = new ArrayList<>();
         Pageable pageable = PageRequest.of(paging.getPageNumber(), paging.getPageSize());
 
+        List<WebCredentialEntity> newEntity = new ArrayList<>();
         try {
             newEntity = repositoryResilient.findByUserId(userId,pageable);
         }catch(CallNotPermittedException ex){
             throw new WebCredentialSearchNotAvailableException(ex);
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
-        }
-        if(newEntity == null){
-            throw new WebCredentialNotFoundException();
         }
         return buildWebCredential(newEntity);
     }

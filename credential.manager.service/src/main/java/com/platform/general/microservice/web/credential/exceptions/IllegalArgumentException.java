@@ -1,5 +1,7 @@
 package com.platform.general.microservice.web.credential.exceptions;
 
+@Deprecated
+//TODO: migrate this errors to {@code InvalidArgumentException} class
 public class IllegalArgumentException extends RuntimeException {
 
     public enum Argument {

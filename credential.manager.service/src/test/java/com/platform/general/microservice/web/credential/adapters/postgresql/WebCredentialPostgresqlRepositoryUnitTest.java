@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
 import com.platform.general.microservice.web.credential.utils.PagingContext;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -16,9 +17,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
@@ -185,4 +188,31 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Assertions.assertThrows(EmptyPagingParameterException.class,()->target.findById(userId,paging));
     }
 
+    @Test
+    public void findCredentialByUserIdWithPageNumberLowerThanZero(){
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = PagingContext.builder().pageNumber(-1).build();
+        Assertions.assertThrows(InvalidArgumentException.class,()->target.findById(userId,paging));
+    }
+
+    @Test
+    public void findCredentialByUserIdWithPageSizeLowerThanOne(){
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = PagingContext.builder().pageNumber(0).build();
+        InvalidArgumentException ex = Assertions.assertThrows(InvalidArgumentException.class,()->target.findById(userId,paging));
+        ex.getError().equals(InvalidArgumentException.Error.PAGE_SIZE_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO);
+    }
+
+    @Test
+    public void findCredentialByUserIdWhenOk(){
+        int pageSize =5;
+        UUID userId = UUID.randomUUID();
+        PagingContext paging = PagingContext.builder().pageNumber(0).pageSize(pageSize).build();
+        List<WebCredentialEntity> webCredentialEntityList = WebCredentialEntityMother.multipleDummyRandomCredential(pageSize, userId);
+        Mockito.doReturn(webCredentialEntityList).when(repoResilient).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
+
+        List<WebCredential> credentialList = target.findById(userId, paging);
+        Mockito.verify(repoResilient,Mockito.times(1)).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
+        Assertions.assertEquals(webCredentialEntityList.size(),credentialList.size());
+    }
 }
