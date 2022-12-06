@@ -88,6 +88,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
     }
 
 
+    @Override
     public List<WebCredential> findById(final UUID userId, PagingContext paging) {
 
         if(paging == null){

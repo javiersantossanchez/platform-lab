@@ -1,10 +1,8 @@
 package com.platform.general.microservice.web.credential;
 
 import com.github.javafaker.Faker;
-import com.platform.general.microservice.web.credential.exceptions.EmptyUserIdException;
+import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -61,5 +59,15 @@ public class WebCredentialFetcherTest {
     public void findCredentialWithNullAsCredentialId(){
         Assertions.assertThrows(IllegalArgumentException.class,()->target.findById(null,UUID.randomUUID()));
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void findCredentialWithUserIdAsNull(){
+        Assertions.assertThrows(InvalidUserInformationException.class,()->target.findByUserId(null,null));
+    }
+
 
 }

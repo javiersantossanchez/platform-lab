@@ -3,11 +3,14 @@ package com.platform.general.microservice.web.credential;
 import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
 import com.platform.general.microservice.web.credential.exceptions.EmptyUserIdException;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import com.platform.general.microservice.web.credential.utils.PagingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,5 +32,13 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
             throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
         }
         return repository.findById(id,userId);
+    }
+
+    @Override
+    public List<WebCredential> findByUserId(final UUID userId, final PagingContext paging) {
+        if(userId == null){
+            throw new InvalidUserInformationException();
+        }
+        return repository.findById(userId,paging);
     }
 }
