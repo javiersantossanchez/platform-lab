@@ -3,8 +3,10 @@ package com.platform.general.microservice.web.credential.ports.out;
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.*;
+import com.platform.general.microservice.web.credential.utils.PagingContext;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface WebCredentialRepository {
@@ -31,6 +33,8 @@ public interface WebCredentialRepository {
      * @throws WebCredentialSearchNotAvailableException - when a rate of errors were found on this process.
      */
     WebCredential findById(final UUID credentialId, final UUID userId);
+
+    List<WebCredential> findById(UUID userId, PagingContext paging);
 
     /**
      * @param id
