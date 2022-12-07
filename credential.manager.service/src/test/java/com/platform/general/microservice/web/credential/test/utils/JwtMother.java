@@ -11,6 +11,14 @@ public class JwtMother {
 
 
     public static Jwt DummyRandomJwt(UUID userId) {
+        return  DummyRandomJwt(userId.toString());
+    }
+
+    public static Jwt InvalidRandomJwt() {
+        return DummyRandomJwt("invalid-user-id");
+    }
+
+    private static Jwt DummyRandomJwt(String userId) {
         return  Jwt.withTokenValue("token")
                 .header("alg", "none")
                 .claim("sub", userId)
@@ -20,6 +28,5 @@ public class JwtMother {
                 .claim("family_name", faker.name().lastName())
                 .build();
     }
-
 
 }

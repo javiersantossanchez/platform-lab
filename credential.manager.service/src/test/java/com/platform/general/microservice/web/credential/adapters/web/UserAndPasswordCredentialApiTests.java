@@ -268,6 +268,23 @@ class UserAndPasswordCredentialApiTests {
 		Assertions.assertEquals(itemsExpectedOnPage,credentialListResult.length);
 	}
 
+	@Test
+	void searchCredentialByUserWhenInvalidUser() throws Exception {
+		InvalidUserInformationException expectedException = new InvalidUserInformationException();
+		int pageSize = 5;
+		int pageNumber = 0;
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.InvalidRandomJwt()))
+		).andExpect(status().is4xxClientError()).andReturn();
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(expectedException.getErrorMessage(),error.getErrorMessage());
+	}
 
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
