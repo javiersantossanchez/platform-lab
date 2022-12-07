@@ -5,6 +5,8 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchNotAvailableException;
+import com.platform.general.microservice.web.credential.test.utils.JwtMother;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -131,6 +133,65 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 	}
 
+
+	@Test
+	void searchCredentialByUserWhenServiceNotAvailableIsThrown() throws Exception {
+		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
+				.transitionToClosedState();
+		postgreSQLDBContainer.stop();
+
+		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
+		final int pageSize = 5;
+		final int pageNumber = 0;
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value())).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+	}
+
+	@Test
+	void searchCredentialByUserWhenGeneralErrorIsThrown() throws Exception {
+		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
+				.transitionToClosedState();
+		postgreSQLDBContainer.stop();
+
+		WebCredentialSearchNotAvailableException expectedResponse = new WebCredentialSearchNotAvailableException();
+		final int pageSize = 5;
+		final int pageNumber = 0;
+		UUID userId = UUID.randomUUID();
+
+		mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().is(HttpStatus.SERVICE_UNAVAILABLE.value())).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+
+
+	}
 
 
 }
