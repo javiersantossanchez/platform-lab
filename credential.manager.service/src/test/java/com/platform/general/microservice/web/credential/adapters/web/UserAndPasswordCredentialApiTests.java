@@ -248,6 +248,27 @@ class UserAndPasswordCredentialApiTests {
 	}
 
 
+	@Test
+	void searchCredentialByUserWhenCredentialDoesNotExistForUser() throws Exception {
+		int pageSize = 5;
+		int pageNumber = 0;
+		int itemsExpectedOnPage = 0;
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isOk()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		WebCredential[] credentialListResult = objectMapper.readValue(response, WebCredential[].class);
+		Assertions.assertEquals(itemsExpectedOnPage,credentialListResult.length);
+	}
+
+
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
