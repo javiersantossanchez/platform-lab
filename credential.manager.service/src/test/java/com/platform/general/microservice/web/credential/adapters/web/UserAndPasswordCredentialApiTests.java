@@ -11,10 +11,12 @@ import com.platform.general.microservice.web.credential.exceptions.IllegalArgume
 import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
+import com.platform.general.microservice.web.credential.test.utils.JwtMother;
 import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -209,6 +213,41 @@ class UserAndPasswordCredentialApiTests {
 		Assertions.assertEquals(entity.getCreationTime(),credential.getCreationDate());
 		Assertions.assertEquals(entity.getId(),credential.getId());
 	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"5, 0, 13",
+			"5, 2, 15"
+	})
+	void searchCredentialByUserWhenOk(int pageSize,int pageNumber,int itemsOnDatabase) throws Exception {
+		int itemsExpectedOnPage = pageSize*(pageNumber+1) <= itemsOnDatabase? pageSize: itemsOnDatabase - (pageSize*(pageNumber+1));
+		UUID userId = UUID.randomUUID();
+		List<WebCredentialEntity> entityList = WebCredentialEntityMother.multipleDummyRandomCredential(itemsOnDatabase,userId);
+		entityList.parallelStream().forEach(current -> dao.save(current));
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isOk()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		WebCredential[] credentialListResult = objectMapper.readValue(response, WebCredential[].class);
+		Assertions.assertEquals(itemsExpectedOnPage,credentialListResult.length);
+		Assertions.assertTrue(Arrays.stream(credentialListResult).allMatch(currentCredential -> entityList.parallelStream().anyMatch(currentEntity -> currentCredential.getUserName().equals(currentEntity.getUserName()))));
+		Assertions.assertTrue(Arrays.stream(credentialListResult).allMatch(currentCredential -> entityList.parallelStream().anyMatch(currentEntity -> currentCredential.getCredentialName().equals(currentEntity.getCredentialName()))));
+		Assertions.assertTrue(Arrays.stream(credentialListResult).allMatch(currentCredential -> entityList.parallelStream().anyMatch(currentEntity -> currentCredential.getPassword().equals(currentEntity.getPassword()))));
+		Assertions.assertTrue(Arrays.stream(credentialListResult).allMatch(currentCredential -> entityList.parallelStream().anyMatch(currentEntity -> currentCredential.getUserId().equals(currentEntity.getUserId()))));
+
+		for(int i=0;i<credentialListResult.length-1;i++){
+			Assertions.assertTrue(credentialListResult[i].getCreationDate().isAfter(credentialListResult[i + 1].getCreationDate()));
+		}
+
+	}
+
+
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////

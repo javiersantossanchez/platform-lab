@@ -59,6 +59,7 @@ public class WebCredentialImpl implements WebCredentialService {
         return fetcher.findById(id,userId);
     }
 
+    @Override
     public List<WebCredential> findByUserId(UUID userId, PagingContext paging) {
         return fetcher.findByUserId(userId,paging);
     }

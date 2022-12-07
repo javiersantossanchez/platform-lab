@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -101,7 +102,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
             throw new InvalidArgumentException(InvalidArgumentException.Error.PAGE_SIZE_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO);
         }
 
-        Pageable pageable = PageRequest.of(paging.getPageNumber(), paging.getPageSize());
+        Pageable pageable = PageRequest.of(paging.getPageNumber(), paging.getPageSize(), Sort.by("creationTime").descending());
 
         List<WebCredentialEntity> newEntity = new ArrayList<>();
         try {
