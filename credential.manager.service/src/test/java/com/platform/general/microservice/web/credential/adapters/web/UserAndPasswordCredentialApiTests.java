@@ -166,19 +166,10 @@ class UserAndPasswordCredentialApiTests {
 
 		InvalidUserInformationException expectedException = new InvalidUserInformationException();
 
-		Jwt jwt = Jwt.withTokenValue("token")
-				.header("alg", "none")
-				.claim("sub", "INVALID-USER-ID")
-				.claim("scope", "openid profile email")
-				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
-				.claim("given_name", "javier")
-				.claim("family_name", "santos")
-				.build();
-
 		MvcResult mvcResult = mockMvc.perform(
 				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,UUID.randomUUID())
 						.contentType(MediaType.APPLICATION_JSON)
-						.with(jwt().jwt(jwt))
+						.with(jwt().jwt(JwtMother.InvalidRandomJwt()))
 		).andExpect(status().is4xxClientError()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
@@ -187,24 +178,13 @@ class UserAndPasswordCredentialApiTests {
 
 	@Test
 	void searchCredentialWhenOk() throws Exception {
-
 		WebCredentialEntity entity = WebCredentialEntityMother.DummyRandomCredential();
 		entity = dao.save(entity);
-
-
-		Jwt jwt = Jwt.withTokenValue("token")
-				.header("alg", "none")
-				.claim("sub", entity.getUserId())
-				.claim("scope", "openid profile email")
-				.claim("sid", "0244e8ef-c894-40b7-b71a-75ef58ddf533")
-				.claim("given_name", "javier")
-				.claim("family_name", "santos")
-				.build();
 
 		MvcResult mvcResult = mockMvc.perform(
 				get("/{baseUrl}/{credentialID}/", UserAndPasswordCredentialApi.BASE_URL,entity.getId())
 						.contentType(MediaType.APPLICATION_JSON)
-						.with(jwt().jwt(jwt))
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(entity.getUserId())))
 		).andExpect(status().isOk()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		WebCredential credential = objectMapper.readValue(response, WebCredential.class);
