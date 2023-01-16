@@ -31,18 +31,18 @@ public class UserAndPasswordCredentialApi {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserAndPasswordCredentialApi.class);
 
 
-    private WebCredentialService webCredential;
+    private WebCredentialService webCredentialService;
 
 
     @Autowired
-    public UserAndPasswordCredentialApi(WebCredentialService webCredential) {
-        this.webCredential = webCredential;
+    public UserAndPasswordCredentialApi(WebCredentialService webCredentialService) {
+        this.webCredentialService = webCredentialService;
     }
 
     @GetMapping("/{credentialId}")
     WebCredential get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
         UserWrapper userWrapper = new UserWrapper(principal);
-        WebCredential credential = webCredential.findById(credentialId,userWrapper.getId());
+        WebCredential credential = webCredentialService.findById(credentialId,userWrapper.getId());
         LOGGER.debug("The user search credential {}",credential);
         return credential;
     }
@@ -51,20 +51,20 @@ public class UserAndPasswordCredentialApi {
     ResponseEntity<List<WebCredential>> getCredentialListByUser(@RequestParam(value="page-number",required = true) int pageNumber, @RequestParam(value="page-size",required = true) int pageSize,  Principal principal,@AuthenticationPrincipal Jwt jwt) {
         UserWrapper userWrapper = new UserWrapper(principal);
         PagingContext pagingContext = PagingContext.builder().pageSize(pageSize).pageNumber(pageNumber).build();
-        List<WebCredential> credentialList = webCredential.findByUserId(userWrapper.getId(),pagingContext);
+        List<WebCredential> credentialList = webCredentialService.findByUserId(userWrapper.getId(),pagingContext);
         return ResponseEntity.ok(credentialList);
     }
 
     @PostMapping("")
     ResponseEntity<WebCredential> create(@RequestBody WebCredentialParam newCredential, Principal principal,@AuthenticationPrincipal Jwt jwt) {// principal and jwt are the paremeters required to review the user or authentication information
         UserWrapper userWrapper = new UserWrapper(principal);
-        WebCredential response = webCredential.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getCredentialName(),userWrapper.getId());
+        WebCredential response = webCredentialService.createNewWebCredential(newCredential.getPassword(),newCredential.getUserName(),newCredential.getCredentialName(),userWrapper.getId());
         LOGGER.debug("New credential was created by the user, Credential: {}",response);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{credentialId}")
     void deleteCredential(@PathVariable(value = "credentialId",required = true) UUID credentialId) {
-        webCredential.deleteByID(credentialId);
+        webCredentialService.deleteByID(credentialId);
     }
 }
