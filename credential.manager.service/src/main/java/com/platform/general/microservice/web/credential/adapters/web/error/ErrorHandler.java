@@ -4,6 +4,7 @@ import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -13,6 +14,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class ErrorHandler {
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity notFoundError(IllegalArgumentException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
+    }
+
+    @ExceptionHandler({InvalidArgumentException.class})
+    public ResponseEntity InvalidArgumentExceptionHandler(InvalidArgumentException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
     }
 
@@ -45,5 +51,10 @@ public class ErrorHandler {
     @ExceptionHandler({InvalidPasswordException.class})
     public ResponseEntity searchNotAvailable(InvalidPasswordException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    public ResponseEntity searchNotAvailable(MissingServletRequestParameterException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(String.format("The parameter %s of type $s is required",exception.getParameterName(),exception.getParameterType())));
     }
 }

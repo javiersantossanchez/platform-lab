@@ -12,6 +12,10 @@ public class InvalidArgumentException extends RuntimeException {
         private Error (String errorMessage){
             this.errorMessage = errorMessage;
         }
+
+        public String getMessage(){
+            return this.errorMessage;
+        }
     }
 
     private Error error;

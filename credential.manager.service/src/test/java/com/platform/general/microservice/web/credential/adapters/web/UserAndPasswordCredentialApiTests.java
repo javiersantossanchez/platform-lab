@@ -7,10 +7,8 @@ import com.platform.general.microservice.web.credential.adapters.postgresql.WebC
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialEntity;
 import com.platform.general.microservice.web.credential.adapters.web.dtos.WebCredentialParam;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
+import com.platform.general.microservice.web.credential.exceptions.*;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
-import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
-import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
 import com.platform.general.microservice.web.credential.test.utils.JwtMother;
 import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
 import org.junit.jupiter.api.Assertions;
@@ -264,6 +262,99 @@ class UserAndPasswordCredentialApiTests {
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
 		Assertions.assertEquals(expectedException.getErrorMessage(),error.getErrorMessage());
+	}
+
+	@Test
+	void searchCredentialByUserWithPageNumberLessThanZero() throws Exception {
+		int pageSize = 5;
+		int pageNumber = -1;
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isBadRequest()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(InvalidArgumentException.Error.PAGE_NUMBER_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO.getMessage(),error.getErrorMessage());
+	}
+
+	@Test
+	void searchCredentialByUserWithPageSizeLessThanOne() throws Exception {
+		int pageSize = 0;
+		int pageNumber = 0;
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param("page-number", String.valueOf(pageNumber))
+						.param("page-size",String.valueOf(pageSize))
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isBadRequest()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertEquals(InvalidArgumentException.Error.PAGE_SIZE_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO.getMessage(),error.getErrorMessage());
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"page-number, 0",
+			"page-size, 1"
+	})
+	void searchCredentialByUserWithOneMissedParameter(String parameterName,String parameterValue) throws Exception {
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param(parameterName, parameterValue)
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isBadRequest()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertTrue(error.getErrorMessage().startsWith("The parameter") && error.getErrorMessage().endsWith("is required"));
+	}
+
+	@Test
+	void searchCredentialByUserWithOutPagingParameters() throws Exception {
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isBadRequest()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertTrue(error.getErrorMessage().startsWith("The parameter") && error.getErrorMessage().endsWith("is required"));
+	}
+	@ParameterizedTest
+	@CsvSource({
+			"page-number, 0, page-size, invalid-value",
+			"page-size, 1, page-number, invalid-value",
+	})
+	void searchCredentialByUserWithPagingParameterAsNotNumericValue(String numericParameterName,String numericParameterValue,String notNumericParameterName,String notNumericParameterValue) throws Exception {
+		UUID userId = UUID.randomUUID();
+
+		MvcResult mvcResult = mockMvc.perform(
+				get("/{baseUrl}", UserAndPasswordCredentialApi.BASE_URL)
+						.param(numericParameterName, numericParameterValue)
+						.param(notNumericParameterName, notNumericParameterValue)
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(jwt().jwt(JwtMother.DummyRandomJwt(userId)))
+		).andExpect(status().isBadRequest()).andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
+		Assertions.assertTrue(error.getErrorMessage().startsWith("Invalid value for"));
 	}
 
 	/////////////////////////////////////////////////////////////////////

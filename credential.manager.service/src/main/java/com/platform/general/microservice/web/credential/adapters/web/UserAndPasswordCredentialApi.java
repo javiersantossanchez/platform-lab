@@ -30,15 +30,21 @@ public class UserAndPasswordCredentialApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserAndPasswordCredentialApi.class);
 
+
+    private WebCredentialService webCredential;
+
+
     @Autowired
-    WebCredentialService webCredential;
+    public UserAndPasswordCredentialApi(WebCredentialService webCredential) {
+        this.webCredential = webCredential;
+    }
 
     @GetMapping("/{credentialId}")
-    ResponseEntity<WebCredential> get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
+    WebCredential get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
         UserWrapper userWrapper = new UserWrapper(principal);
         WebCredential credential = webCredential.findById(credentialId,userWrapper.getId());
         LOGGER.debug("The user search credential {}",credential);
-        return ResponseEntity.ok(credential);
+        return credential;
     }
 
     @GetMapping("")
