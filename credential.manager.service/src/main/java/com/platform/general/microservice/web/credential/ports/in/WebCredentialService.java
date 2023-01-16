@@ -16,7 +16,7 @@ public interface WebCredentialService {
      * Search on the system the detail for a credential, based on the id received as parameter
      *
      * @param id     - UUID unique value use as filter for the search.
-     * @param userId
+     * @param userId - User id owner of credential
      * @return the credential object found in the system with the id
      *
      * @exception WebCredentialSearchException - A error its generated during the searching
