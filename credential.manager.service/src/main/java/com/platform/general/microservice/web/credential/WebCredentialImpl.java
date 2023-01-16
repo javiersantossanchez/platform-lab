@@ -1,7 +1,7 @@
 package com.platform.general.microservice.web.credential;
 
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
-import com.platform.general.microservice.web.credential.ports.in.WebCredentialService;
+import com.platform.general.microservice.web.credential.ports.in.WebCredentialUserCases;
 import com.platform.general.microservice.web.credential.utils.PagingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class WebCredentialImpl implements WebCredentialService {
+public class WebCredentialImpl implements WebCredentialUserCases {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebCredentialImpl.class);
 

@@ -8,7 +8,7 @@ import com.platform.general.microservice.web.credential.utils.PagingContext;
 import java.util.List;
 import java.util.UUID;
 
-public interface WebCredentialService {
+public interface WebCredentialUserCases {
 
     WebCredential createNewWebCredential(String password, String userName, String webSite, UUID userId);
 
