@@ -150,7 +150,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         UUID userId = UUID.randomUUID();
         Mockito.doThrow(CallNotPermittedException.class).when(repoResilient).find(id,userId);
 
-        Assertions.assertThrows(WebCredentialSearchNotAvailableException.class,()->target.findById(id,userId));
+        Assertions.assertThrows(WebCredentialServiceNotAvailableException.class,()->target.findById(id,userId));
     }
 
 
@@ -224,7 +224,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
 
         Mockito.doThrow(CallNotPermittedException.class).when(repoResilient).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
 
-        Assertions.assertThrows(WebCredentialSearchNotAvailableException.class,()->target.findById(userId,paging));
+        Assertions.assertThrows(WebCredentialServiceNotAvailableException.class,()->target.findById(userId,paging));
     }
 
     @Test

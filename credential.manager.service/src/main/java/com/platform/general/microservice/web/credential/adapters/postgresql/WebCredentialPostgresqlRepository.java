@@ -78,7 +78,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         try {
             newEntity = repositoryResilient.find(credentialId, userId);
         }catch(CallNotPermittedException ex){
-            throw new WebCredentialSearchNotAvailableException(ex);
+            throw new WebCredentialServiceNotAvailableException(ex);
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
         }
@@ -108,7 +108,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         try {
             newEntity = repositoryResilient.findByUserId(userId,pageable);
         }catch(CallNotPermittedException ex){
-            throw new WebCredentialSearchNotAvailableException(ex);
+            throw new WebCredentialServiceNotAvailableException(ex);
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
         }

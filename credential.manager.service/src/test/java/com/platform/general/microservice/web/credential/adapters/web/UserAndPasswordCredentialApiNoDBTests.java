@@ -5,7 +5,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchNotAvailableException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialServiceNotAvailableException;
 import com.platform.general.microservice.web.credential.test.utils.JwtMother;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -164,7 +164,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 				.transitionToClosedState();
 		postgreSQLDBContainer.stop();
 
-		WebCredentialSearchNotAvailableException expectedResponse = new WebCredentialSearchNotAvailableException();
+		WebCredentialServiceNotAvailableException expectedResponse = new WebCredentialServiceNotAvailableException();
 		final int pageSize = 5;
 		final int pageNumber = 0;
 		UUID userId = UUID.randomUUID();

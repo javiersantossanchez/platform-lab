@@ -1,13 +1,13 @@
 package com.platform.general.microservice.web.credential.exceptions;
 
-public class WebCredentialSearchNotAvailableException extends RuntimeException {
+public class WebCredentialServiceNotAvailableException extends RuntimeException {
 
 
-    public WebCredentialSearchNotAvailableException(Exception exception) {
+    public WebCredentialServiceNotAvailableException(Exception exception) {
         super(exception);
     }
 
-    public WebCredentialSearchNotAvailableException() {
+    public WebCredentialServiceNotAvailableException() {
     }
 
     public String getErrorMessage(){

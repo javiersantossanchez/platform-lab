@@ -43,8 +43,8 @@ public class ErrorHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(error));
     }
 
-    @ExceptionHandler({WebCredentialSearchNotAvailableException.class})
-    public ResponseEntity searchNotAvailable(WebCredentialSearchNotAvailableException exception) {
+    @ExceptionHandler({WebCredentialServiceNotAvailableException.class})
+    public ResponseEntity searchNotAvailable(WebCredentialServiceNotAvailableException exception) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(exception.getErrorMessage()));
     }
 

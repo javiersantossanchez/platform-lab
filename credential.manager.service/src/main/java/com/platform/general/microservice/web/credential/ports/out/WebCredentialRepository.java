@@ -30,7 +30,7 @@ public interface WebCredentialRepository {
      * @throws IllegalArgumentException       - When {@code credentialId} has invalid value
      * @throws WebCredentialNotFoundException - When The {@code credentialId} does not exist on the system
      * @throws InvalidUserInformationException           - When {@code userId} is null
-     * @throws WebCredentialSearchNotAvailableException - when a rate of errors were found on this process.
+     * @throws WebCredentialServiceNotAvailableException - when a rate of errors were found on this process.
      */
     WebCredential findById(final UUID credentialId, final UUID userId);
 
