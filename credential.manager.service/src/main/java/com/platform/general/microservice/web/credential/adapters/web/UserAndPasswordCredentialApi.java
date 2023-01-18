@@ -42,7 +42,7 @@ public class UserAndPasswordCredentialApi {
     @GetMapping("/{credentialId}")
     WebCredential get(@PathVariable(value = "credentialId",required = true) UUID credentialId, Principal principal,@AuthenticationPrincipal Jwt jwt) {
         UserWrapper userWrapper = new UserWrapper(principal);
-        WebCredential credential = webCredentialUserCases.findById(credentialId,userWrapper.getId());
+        WebCredential credential = webCredentialUserCases.findCredentialById(credentialId,userWrapper.getId());
         LOGGER.debug("The user search credential {}",credential);
         return credential;
     }

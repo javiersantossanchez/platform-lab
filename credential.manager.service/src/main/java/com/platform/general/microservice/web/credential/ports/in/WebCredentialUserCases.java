@@ -22,7 +22,7 @@ public interface WebCredentialUserCases {
      * @exception WebCredentialSearchException - A error its generated during the searching
      * @exception WebCredentialNotFoundException - The id does not exist on the system
      */
-    WebCredential findById(UUID id, UUID userId);
+    WebCredential findCredentialById(UUID id, UUID userId);
 
     List<WebCredential> findByUserId(UUID userId, PagingContext paging);
 

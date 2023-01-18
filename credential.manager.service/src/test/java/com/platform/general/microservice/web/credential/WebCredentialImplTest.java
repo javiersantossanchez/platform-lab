@@ -97,7 +97,7 @@ public class WebCredentialImplTest {
                 .id(UUID.randomUUID())
                 .build();
         Mockito.doReturn(newCredential).when(fetcher).findById(newCredential.getId(),userId);
-        WebCredential credentialFound = target.findById(newCredential.getId(),userId);
+        WebCredential credentialFound = target.findCredentialById(newCredential.getId(),userId);
         Assertions.assertEquals(newCredential,credentialFound);
     }
 

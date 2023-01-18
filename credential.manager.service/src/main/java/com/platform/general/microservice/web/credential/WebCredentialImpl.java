@@ -55,7 +55,7 @@ public class WebCredentialImpl implements WebCredentialUserCases {
      *  {@inheritDoc}
      */
     @Override
-    public WebCredential findById(UUID id, UUID userId) {
+    public WebCredential findCredentialById(UUID id, UUID userId) {
         return fetcher.findById(id,userId);
     }
 
