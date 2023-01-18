@@ -32,8 +32,8 @@ public class ErrorHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(exception.getErrorMessage()));
     }
 
-    @ExceptionHandler({WebCredentialSearchException.class})
-    public ResponseEntity notFoundError(WebCredentialSearchException exception) {
+    @ExceptionHandler({WebCredentialGeneralException.class})
+    public ResponseEntity notFoundError(WebCredentialGeneralException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(exception.getErrorMessage()));
     }
 

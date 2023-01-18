@@ -1,13 +1,13 @@
 package com.platform.general.microservice.web.credential.exceptions;
 
-public class WebCredentialSearchException extends RuntimeException {
+public class WebCredentialGeneralException extends RuntimeException {
 
 
-    public WebCredentialSearchException(Exception exception) {
+    public WebCredentialGeneralException(Exception exception) {
         super(exception);
     }
 
-    public WebCredentialSearchException() {
+    public WebCredentialGeneralException() {
     }
 
     public String getErrorMessage(){

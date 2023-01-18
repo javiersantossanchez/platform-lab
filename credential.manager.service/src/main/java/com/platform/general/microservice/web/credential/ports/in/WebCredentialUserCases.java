@@ -2,7 +2,7 @@ package com.platform.general.microservice.web.credential.ports.in;
 
 import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialNotFoundException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialGeneralException;
 import com.platform.general.microservice.web.credential.utils.PagingContext;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface WebCredentialUserCases {
      * @param userId - User id owner of credential
      * @return the credential object found in the system with the id
      *
-     * @exception WebCredentialSearchException - A error its generated during the searching
+     * @exception WebCredentialGeneralException - A error its generated during the searching
      * @exception WebCredentialNotFoundException - The id does not exist on the system
      */
     WebCredential findCredentialById(UUID id, UUID userId);

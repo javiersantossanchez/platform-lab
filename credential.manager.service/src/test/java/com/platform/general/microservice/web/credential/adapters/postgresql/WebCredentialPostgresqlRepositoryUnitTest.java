@@ -141,7 +141,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         UUID userId = UUID.randomUUID();
         Mockito.doThrow(RuntimeException.class).when(repoResilient).find(id,userId);
 
-        Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(id,userId));
+        Assertions.assertThrows(WebCredentialGeneralException.class,()->target.findById(id,userId));
     }
 
     @Test()
@@ -234,7 +234,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         PagingContext paging = PagingContext.builder().pageNumber(0).pageSize(pageSize).build();
         Mockito.doThrow(RuntimeException.class).when(repoResilient).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
 
-        Assertions.assertThrows(WebCredentialSearchException.class,()->target.findById(userId,paging));
+        Assertions.assertThrows(WebCredentialGeneralException.class,()->target.findById(userId,paging));
     }
 
 }

@@ -80,7 +80,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         }catch(CallNotPermittedException ex){
             throw new WebCredentialServiceNotAvailableException(ErrorMessageConstants.SEARCH_SERVICE_NOT_AVAILABLE,ex);
         }catch (RuntimeException ex){
-            throw new WebCredentialSearchException(ex);
+            throw new WebCredentialGeneralException(ex);
         }
         if(newEntity == null){
             throw new WebCredentialNotFoundException();
@@ -110,7 +110,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         }catch(CallNotPermittedException ex){
             throw new WebCredentialServiceNotAvailableException(ex);
         }catch (RuntimeException ex){
-            throw new WebCredentialSearchException(ex);
+            throw new WebCredentialGeneralException(ex);
         }
         return buildWebCredential(newEntity);
     }

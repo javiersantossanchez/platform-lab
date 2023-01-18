@@ -39,8 +39,8 @@ public class WebCredentialFetcherTest {
     public void findCredentialWhenAnErrorGeneratedOnSearch(){
         UUID credentialId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        Mockito.doThrow(new WebCredentialSearchException()).when(repository).findById(credentialId,userId);
-        Assertions.assertThrows(WebCredentialSearchException.class,()-> target.findById(credentialId,userId));
+        Mockito.doThrow(new WebCredentialGeneralException()).when(repository).findById(credentialId,userId);
+        Assertions.assertThrows(WebCredentialGeneralException.class,()-> target.findById(credentialId,userId));
     }
 
     @Test
@@ -74,8 +74,8 @@ public class WebCredentialFetcherTest {
     public void findCredentialByUserWhenAnErrorGeneratedOnSearch(){
         UUID userId = UUID.randomUUID();
         PagingContext paging = PagingContext.builder().pageNumber(1).pageSize(5).build();
-        Mockito.doThrow(new WebCredentialSearchException()).when(repository).findById(userId,paging);
-        Assertions.assertThrows(WebCredentialSearchException.class,()-> target.findByUserId(userId,paging));
+        Mockito.doThrow(new WebCredentialGeneralException()).when(repository).findById(userId,paging);
+        Assertions.assertThrows(WebCredentialGeneralException.class,()-> target.findByUserId(userId,paging));
     }
 
 }

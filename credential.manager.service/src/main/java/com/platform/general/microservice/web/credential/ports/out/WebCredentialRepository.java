@@ -26,7 +26,7 @@ public interface WebCredentialRepository {
 
     /**
      * @return - Credential found on the datastore
-     * @throws WebCredentialSearchException   - When a problem is generated on searching
+     * @throws WebCredentialGeneralException   - When a problem is generated on searching
      * @throws IllegalArgumentException       - When {@code credentialId} has invalid value
      * @throws WebCredentialNotFoundException - When The {@code credentialId} does not exist on the system
      * @throws InvalidUserInformationException           - When {@code userId} is null

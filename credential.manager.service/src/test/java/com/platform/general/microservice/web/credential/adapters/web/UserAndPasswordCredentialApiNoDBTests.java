@@ -5,8 +5,7 @@ import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
 import com.platform.general.microservice.web.credential.exceptions.ErrorMessageConstants;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
-import com.platform.general.microservice.web.credential.exceptions.WebCredentialServiceNotAvailableException;
+import com.platform.general.microservice.web.credential.exceptions.WebCredentialGeneralException;
 import com.platform.general.microservice.web.credential.test.utils.JwtMother;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -82,7 +81,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 	void searchCredentialWhenGeneralErrorIsThrown() throws Exception {
 		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
 				.transitionToClosedState();
-		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
+		WebCredentialGeneralException expectedResponse = new WebCredentialGeneralException();
 
 		postgreSQLDBContainer.stop();
 
@@ -108,7 +107,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 	void searchCredentialWhenServiceNotAvailableIsThrown() throws Exception {
 		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
 				.transitionToClosedState();
-		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
+		WebCredentialGeneralException expectedResponse = new WebCredentialGeneralException();
 
 		postgreSQLDBContainer.stop();
 
@@ -141,7 +140,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 				.transitionToClosedState();
 		postgreSQLDBContainer.stop();
 
-		WebCredentialSearchException expectedResponse = new WebCredentialSearchException();
+		WebCredentialGeneralException expectedResponse = new WebCredentialGeneralException();
 		final int pageSize = 5;
 		final int pageNumber = 0;
 		UUID userId = UUID.randomUUID();
