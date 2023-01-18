@@ -4,14 +4,18 @@ public class WebCredentialServiceNotAvailableException extends RuntimeException 
 
 
     public WebCredentialServiceNotAvailableException(Exception exception) {
-        super(exception);
+        super("Search the credential functionality is not available",exception);
+    }
+
+    public WebCredentialServiceNotAvailableException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public WebCredentialServiceNotAvailableException() {
     }
 
     public String getErrorMessage(){
-        return "Search the credential functionality is not available";
+        return getMessage();
     }
 
 }

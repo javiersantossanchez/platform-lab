@@ -78,7 +78,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         try {
             newEntity = repositoryResilient.find(credentialId, userId);
         }catch(CallNotPermittedException ex){
-            throw new WebCredentialServiceNotAvailableException(ex);
+            throw new WebCredentialServiceNotAvailableException(ErrorMessageConstants.SEARCH_SERVICE_NOT_AVAILABLE,ex);
         }catch (RuntimeException ex){
             throw new WebCredentialSearchException(ex);
         }

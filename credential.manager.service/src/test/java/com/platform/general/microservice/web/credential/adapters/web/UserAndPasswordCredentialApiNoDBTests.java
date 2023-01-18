@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialDao;
 import com.platform.general.microservice.web.credential.adapters.web.error.ErrorResponse;
+import com.platform.general.microservice.web.credential.exceptions.ErrorMessageConstants;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialSearchException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialServiceNotAvailableException;
 import com.platform.general.microservice.web.credential.test.utils.JwtMother;
@@ -164,7 +165,6 @@ class UserAndPasswordCredentialApiNoDBTests {
 				.transitionToClosedState();
 		postgreSQLDBContainer.stop();
 
-		WebCredentialServiceNotAvailableException expectedResponse = new WebCredentialServiceNotAvailableException();
 		final int pageSize = 5;
 		final int pageNumber = 0;
 		UUID userId = UUID.randomUUID();
@@ -188,7 +188,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
-		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+		Assertions.assertEquals(ErrorMessageConstants.SEARCH_SERVICE_NOT_AVAILABLE, error.getErrorMessage());
 
 
 	}
