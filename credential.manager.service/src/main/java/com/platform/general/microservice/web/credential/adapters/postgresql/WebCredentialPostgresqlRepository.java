@@ -82,7 +82,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         }catch (RuntimeException ex){
             throw new WebCredentialGeneralException(ErrorMessageConstants.SEARCHING_CREDENTIAL_FAILS,ex);
         }
-        if(newEntity == null){
+        if(newEntity == null){//TODO: review this error, Do I want to throws a error on this point?
             throw new WebCredentialNotFoundException();
         }
         return buildWebCredential(newEntity);
