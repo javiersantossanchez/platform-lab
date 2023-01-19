@@ -81,7 +81,6 @@ class UserAndPasswordCredentialApiNoDBTests {
 	void searchCredentialWhenGeneralErrorIsThrown() throws Exception {
 		circuitBreakerRegistry.circuitBreaker("CircuitBreakerWebCredentialPostgresqlRepositoryResilient")
 				.transitionToClosedState();
-		WebCredentialGeneralException expectedResponse = new WebCredentialGeneralException();
 
 		postgreSQLDBContainer.stop();
 
@@ -100,7 +99,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 		).andExpect(status().is5xxServerError()).andReturn();
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
-		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+		Assertions.assertEquals(ErrorMessageConstants.SEARCHING_CREDENTIAL_FAILS, error.getErrorMessage());
 	}
 
 	@Test
@@ -140,7 +139,6 @@ class UserAndPasswordCredentialApiNoDBTests {
 				.transitionToClosedState();
 		postgreSQLDBContainer.stop();
 
-		WebCredentialGeneralException expectedResponse = new WebCredentialGeneralException();
 		final int pageSize = 5;
 		final int pageNumber = 0;
 		UUID userId = UUID.randomUUID();
@@ -155,7 +153,7 @@ class UserAndPasswordCredentialApiNoDBTests {
 
 		String response = mvcResult.getResponse().getContentAsString();
 		ErrorResponse error = objectMapper.readValue(response, ErrorResponse.class);
-		Assertions.assertEquals(expectedResponse.getErrorMessage(), error.getErrorMessage());
+		Assertions.assertEquals(ErrorMessageConstants.SEARCHING_CREDENTIAL_FAILS, error.getErrorMessage());
 	}
 
 	@Test

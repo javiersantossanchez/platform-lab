@@ -80,7 +80,7 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         }catch(CallNotPermittedException ex){
             throw new WebCredentialServiceNotAvailableException(ErrorMessageConstants.SEARCH_SERVICE_NOT_AVAILABLE,ex);
         }catch (RuntimeException ex){
-            throw new WebCredentialGeneralException(ex);
+            throw new WebCredentialGeneralException(ErrorMessageConstants.SEARCHING_CREDENTIAL_FAILS,ex);
         }
         if(newEntity == null){
             throw new WebCredentialNotFoundException();

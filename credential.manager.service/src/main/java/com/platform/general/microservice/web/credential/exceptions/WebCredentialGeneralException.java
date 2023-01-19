@@ -4,14 +4,18 @@ public class WebCredentialGeneralException extends RuntimeException {
 
 
     public WebCredentialGeneralException(Exception exception) {
-        super(exception);
+        super("An error was generated to search the credential",exception);
+    }
+
+    public WebCredentialGeneralException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public WebCredentialGeneralException() {
     }
 
     public String getErrorMessage(){
-        return "An error was generated to search the credential";
+        return this.getMessage();
     }
 
 }
