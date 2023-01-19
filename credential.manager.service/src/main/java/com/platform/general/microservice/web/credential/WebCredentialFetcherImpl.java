@@ -2,6 +2,7 @@ package com.platform.general.microservice.web.credential;
 
 import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
+import com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import com.platform.general.microservice.web.credential.utils.PagingContext;
@@ -28,7 +29,7 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
             throw new InvalidUserInformationException();
         }
         if(id == null){
-            throw new IllegalArgumentException(IllegalArgumentException.Argument.ID, IllegalArgumentException.Validation.NOT_EMPTY);
+            throw new InvalidArgumentException(InvalidArgumentException.Error.CREDENTIAL_ID_SHOULD_BE_NOT_NULL);
         }
         return repository.findById(id,userId);
     }
