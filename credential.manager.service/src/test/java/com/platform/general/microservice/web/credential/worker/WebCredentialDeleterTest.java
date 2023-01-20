@@ -1,7 +1,8 @@
-package com.platform.general.microservice.web.credential;
+package com.platform.general.microservice.web.credential.worker;
 
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
+import com.platform.general.microservice.web.credential.worker.WebCredentialDeleter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

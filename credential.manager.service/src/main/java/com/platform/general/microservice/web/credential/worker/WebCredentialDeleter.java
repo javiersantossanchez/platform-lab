@@ -1,4 +1,4 @@
-package com.platform.general.microservice.web.credential;
+package com.platform.general.microservice.web.credential.worker;
 
 import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;

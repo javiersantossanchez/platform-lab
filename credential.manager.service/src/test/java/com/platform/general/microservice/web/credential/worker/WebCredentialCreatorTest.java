@@ -1,12 +1,14 @@
-package com.platform.general.microservice.web.credential;
+package com.platform.general.microservice.web.credential.worker;
 
 import com.github.javafaker.Faker;
+import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidPasswordException;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import com.platform.general.microservice.web.credential.utils.DateManager;
 import com.platform.general.microservice.web.credential.validators.PasswordValidator;
+import com.platform.general.microservice.web.credential.worker.WebCredentialCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

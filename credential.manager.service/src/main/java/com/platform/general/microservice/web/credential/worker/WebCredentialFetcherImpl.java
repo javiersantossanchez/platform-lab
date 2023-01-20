@@ -1,9 +1,8 @@
-package com.platform.general.microservice.web.credential;
+package com.platform.general.microservice.web.credential.worker;
 
+import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.config.ConstantaAAAA;
-import com.platform.general.microservice.web.credential.exceptions.IllegalArgumentException;
 import com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException;
-import com.platform.general.microservice.web.credential.exceptions.InvalidUserInformationException;
 import com.platform.general.microservice.web.credential.ports.out.WebCredentialRepository;
 import com.platform.general.microservice.web.credential.utils.PagingContext;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
-package com.platform.general.microservice.web.credential;
+package com.platform.general.microservice.web.credential.worker;
 
+import com.platform.general.microservice.web.credential.WebCredential;
 import com.platform.general.microservice.web.credential.exceptions.WebCredentialRegistrationException;
 
 import java.util.UUID;
