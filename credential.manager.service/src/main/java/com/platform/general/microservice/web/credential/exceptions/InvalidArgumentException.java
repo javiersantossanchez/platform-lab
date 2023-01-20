@@ -6,6 +6,7 @@ public class InvalidArgumentException extends RuntimeException {
         PAGE_NUMBER_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO("page number should be bigger than zero"),
         PAGE_SIZE_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO("page size should be bigger than one"),
 
+        USER_ID_SHOULD_BE_NOT_NULL("User id should be not null"),
         CREDENTIAL_ID_SHOULD_BE_NOT_NULL("Credential id should be not null")
         ;
 

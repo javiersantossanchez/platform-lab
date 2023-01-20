@@ -53,7 +53,7 @@ public class WebCredentialFetcherTest {
 
     @Test
     public void findCredentialWithNullAsUserId(){
-        Assertions.assertThrows(InvalidUserInformationException.class,()->target.findById(UUID.randomUUID(),null));
+        Assertions.assertThrows(InvalidArgumentException.class,()->target.findById(UUID.randomUUID(),null));
     }
 
     @Test()
@@ -67,7 +67,7 @@ public class WebCredentialFetcherTest {
 
     @Test
     public void findCredentialByUserWithUserIdAsNull(){
-        Assertions.assertThrows(InvalidUserInformationException.class,()->target.findByUserId(null,null));
+        Assertions.assertThrows(InvalidArgumentException.class,()->target.findByUserId(null,null));
     }
 
     @Test

@@ -29,7 +29,6 @@ public interface WebCredentialRepository {
      * @throws WebCredentialGeneralException   - When a problem is generated on searching
      * @throws IllegalArgumentException       - When {@code credentialId} has invalid value
      * @throws WebCredentialNotFoundException - When The {@code credentialId} does not exist on the system
-     * @throws InvalidUserInformationException           - When {@code userId} is null
      * @throws WebCredentialServiceNotAvailableException - when a rate of errors were found on this process.
      */
     WebCredential findById(final UUID credentialId, final UUID userId);

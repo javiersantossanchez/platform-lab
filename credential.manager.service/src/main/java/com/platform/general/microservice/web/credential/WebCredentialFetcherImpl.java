@@ -26,7 +26,7 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
     @Override
     public WebCredential findById(final UUID id, final UUID userId) {
         if(userId == null){
-            throw new InvalidUserInformationException();
+            throw new InvalidArgumentException(InvalidArgumentException.Error.USER_ID_SHOULD_BE_NOT_NULL);
         }
         if(id == null){
             throw new InvalidArgumentException(InvalidArgumentException.Error.CREDENTIAL_ID_SHOULD_BE_NOT_NULL);
@@ -37,7 +37,7 @@ public class WebCredentialFetcherImpl implements WebCredentialFetcher {
     @Override
     public List<WebCredential> findByUserId(final UUID userId, final PagingContext paging) {
         if(userId == null){
-            throw new InvalidUserInformationException();
+            throw new InvalidArgumentException(InvalidArgumentException.Error.USER_ID_SHOULD_BE_NOT_NULL);
         }
         return repository.findById(userId,paging);
     }
