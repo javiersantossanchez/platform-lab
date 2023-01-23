@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.platform.general.microservice.web.credential.adapters.postgresql.WebCredentialEntity.UPDATE_PASSWORD;
+
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = UPDATE_PASSWORD, query = "update user_password_credential set password = ?1 where user_password_credential_id = ?2"),
+})
 @Entity
 @Table(name = "user_password_credential")
 @Getter
@@ -17,6 +23,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 public class WebCredentialEntity {
+
+    public static final String UPDATE_PASSWORD = "UPDATE_PASSWORD";
+
 
     @Id
     @GeneratedValue

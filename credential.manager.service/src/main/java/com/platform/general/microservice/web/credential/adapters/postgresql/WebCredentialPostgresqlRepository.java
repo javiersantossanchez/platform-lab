@@ -136,6 +136,13 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
     }
 
 
+
+
+
+
+////////////////////////////////////////////////////////////////////
+///////////////////////INTERNAL METHODS/////////////////////////////
+///////////////////////////////////////////////////////////////////
     private List<WebCredential> buildWebCredential(List<WebCredentialEntity> entityList){
         return entityList.stream().map(current -> this.buildWebCredential(current)).collect(Collectors.toList());
     }

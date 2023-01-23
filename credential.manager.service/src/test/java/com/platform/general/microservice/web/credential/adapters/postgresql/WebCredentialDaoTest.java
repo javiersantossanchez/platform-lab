@@ -54,6 +54,9 @@ public class WebCredentialDaoTest  {
     private JwtDecoder jwtDecoder;
 
 
+////////////////////////////////////////////////////////////////
+/////////////TEST CREATE NEW CREDENTIAL/////////////////////////
+////////////////////////////////////////////////////////////////
     @Test
     public void createOneCredentialWhenOk(){
 
@@ -210,11 +213,12 @@ public class WebCredentialDaoTest  {
                 .build();
         Assertions.assertThrows(DataIntegrityViolationException.class,()->repository.save(duplicatedEntity));
     }
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
 
 
+
+////////////////////////////////////////////////////////////////
+/////////////TEST FIND CREDENTIAL BY ID/////////////////////////
+////////////////////////////////////////////////////////////////
     @Test
     public void findCredentialByIDWithNull(){
         Assertions.assertThrows(InvalidDataAccessApiUsageException.class,()-> repository.findById(null));
@@ -245,19 +249,21 @@ public class WebCredentialDaoTest  {
         Assertions.assertTrue(entityFound.isEmpty());
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////
+////////////////TEST DELETE CREDENTIAL//////////////////////////
+////////////////////////////////////////////////////////////////
     @Test
     public void deleteCredentialWhenIdDoesNotExist(){
         Assertions.assertThrows(EmptyResultDataAccessException.class,()-> repository.deleteById(UUID.randomUUID()));
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////
+///////////////TEST FIND ALL CREDENTIALS/////////////////////////
+////////////////////////////////////////////////////////////////
     @Test
     public void findAllCredentialByIDAndUserIDWhenOk(){
         UUID userId1 = UUID.randomUUID();
@@ -300,5 +306,55 @@ public class WebCredentialDaoTest  {
         Assertions.assertNotNull(entitiesFound);
         Assertions.assertTrue(entitiesFound.isEmpty());
     }
+
+
+////////////////////////////////////////////////////////////////
+//////////////////TEST UPDATE PASSWORD /////////////////////////
+////////////////////////////////////////////////////////////////
+
+    @Test
+    public void updatePasswordCredentialWhenOK(){
+
+        final String expectedPassword = "new-value-for-password";
+        final String originalPassword ="original-value";
+        WebCredentialEntity credential = repository.save(WebCredentialEntityMother.DummyRandomCredentialWithPassword(originalPassword));
+
+        int recordsUpdated = repository.updatePassword(expectedPassword,credential.getId());
+        credential =repository.findById(credential.getId()).orElse(null);
+
+        Assertions.assertEquals(1,recordsUpdated);
+        Assertions.assertNotNull(credential);
+        Assertions.assertEquals(expectedPassword,credential.getPassword());
+    }
+
+    @Test
+    public void updatePasswordCredentialWhenCredentialDoesNotExist(){
+
+        final String expectedPassword = "new-value-for-password";
+        final UUID credentialId = UUID.randomUUID();
+
+        int recordsUpdated = repository.updatePassword(expectedPassword,credentialId);
+        WebCredentialEntity credential =repository.findById(credentialId).orElse(null);
+
+        Assertions.assertEquals(0,recordsUpdated);
+        Assertions.assertNull(credential);
+    }
+
+    @Test
+    public void updatePasswordCredentialWithPasswordBiggerAsRequired(){
+        final String expectedPassword = faker.internet().password(51,60);
+        WebCredentialEntity credential = repository.save(WebCredentialEntityMother.DummyRandomCredential());
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.updatePassword(expectedPassword,credential.getId()));
+
+    }
+
+    @Test
+    public void updatePasswordCredentialWithNullAsPassword(){
+        final String expectedPassword = null;
+        WebCredentialEntity credential = repository.save(WebCredentialEntityMother.DummyRandomCredential());
+        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.updatePassword(expectedPassword,credential.getId()));
+
+    }
+
 
 }

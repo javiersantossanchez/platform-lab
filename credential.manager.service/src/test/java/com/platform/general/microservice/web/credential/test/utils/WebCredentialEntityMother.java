@@ -20,9 +20,17 @@ public class WebCredentialEntityMother {
         return  WebCredentialEntityMother.DummyRandomCredential(UUID.randomUUID());
     }
 
+    public static WebCredentialEntity DummyRandomCredentialWithPassword(String password) {
+        return  WebCredentialEntityMother.DummyRandomCredential(UUID.randomUUID(),password);
+    }
+
     private static WebCredentialEntity DummyRandomCredential(UUID userId) {
+        return DummyRandomCredential(userId,faker.internet().password());
+    }
+
+    private static WebCredentialEntity DummyRandomCredential(UUID userId,String password) {
         return WebCredentialEntity.builder()
-                .password(faker.internet().password())
+                .password(password)
                 .userName(faker.name().username())
                 .credentialName(faker.internet().domainName())
                 .creationTime(LocalDateTime.now())
