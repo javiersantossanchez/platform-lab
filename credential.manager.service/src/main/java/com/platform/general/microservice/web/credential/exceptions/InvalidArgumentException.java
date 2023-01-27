@@ -8,7 +8,9 @@ public class InvalidArgumentException extends RuntimeException {
 
         USER_ID_SHOULD_BE_NOT_NULL("User id should be not null"),
         CREDENTIAL_ID_SHOULD_BE_NOT_NULL("Credential id should be not null"),
-        PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS("Password is bigger than required")
+        PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS("Password is bigger than required"),
+        PASSWORD_SHOULD_BE_NOT_NULL("Password should be not null"),
+        PASSWORD_SHOULD_BE_NOT_EMPTY("Password should be not empty")
         ;
 
         private String errorMessage;

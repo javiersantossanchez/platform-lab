@@ -3,6 +3,7 @@ package com.platform.general.microservice.web.credential.adapters.postgresql;
 import com.github.javafaker.Faker;
 import com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException;
 import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException.Error.PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS;
+import static org.postgresql.util.PSQLState.NOT_NULL_VIOLATION;
 
 
 @Testcontainers
@@ -369,9 +371,22 @@ public class WebCredentialDaoTest  {
     @Test
     public void updatePasswordCredentialWithNullAsPassword(){
         final String expectedPassword = null;
+        final String sqlErrorCodeExpected = NOT_NULL_VIOLATION.getState();
+        String sqlErrorCodeActual=null;
+        final String errorMessageExpected ="ERROR: null value in column \"password\" of relation \"user_password_credential\" violates not-null constraint";
+        String errorMessageActual=null;
         WebCredentialEntity credential = repository.save(WebCredentialEntityMother.DummyRandomCredential());
-        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.updatePassword(expectedPassword,credential.getId()));
-
+        DataIntegrityViolationException exception =Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.updatePassword(expectedPassword,credential.getId()));
+        if(exception.getCause() instanceof ConstraintViolationException){
+            ConstraintViolationException dataException = (ConstraintViolationException) exception.getCause();
+            if(dataException.getCause() instanceof PSQLException) {
+                PSQLException psqlException = (PSQLException) dataException.getCause();
+                sqlErrorCodeActual = psqlException.getSQLState();
+                errorMessageActual = psqlException.getMessage();
+            }
+        }
+        Assertions.assertEquals(sqlErrorCodeExpected,sqlErrorCodeActual);
+        Assertions.assertTrue(errorMessageActual.startsWith(errorMessageExpected));
     }
 
 

@@ -12,6 +12,10 @@ import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -246,7 +250,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
 
     @Test
     public void updatePasswordWhenOk(){
-        String newPassword = "";
+        String newPassword = faker.internet().password(5,20);
         UUID credentialId = UUID.randomUUID();
         int numberOfCredentialUpdatedExpected = 1;
         Mockito.doReturn(numberOfCredentialUpdatedExpected).when(repo).updatePassword(newPassword,credentialId);
@@ -256,7 +260,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
 
     @Test
     public void updatePasswordCredentialWhenExceptionIsThrowBecausePasswordIsBigger(){
-        String newPassword = "";
+        String newPassword = faker.internet().password(5,20);
         UUID credentialId = UUID.randomUUID();
 
         PSQLException psqlException = new PSQLException("ERROR: value too long for type character varying(50)", PSQLState.STRING_DATA_RIGHT_TRUNCATION);
@@ -268,8 +272,29 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
     }
 
     @Test
+    public void updatePasswordCredentialWhenExceptionIsThrowBecausePasswordIsNull(){
+        String newPassword = null;
+        UUID credentialId = UUID.randomUUID();
+
+        PSQLException psqlException = new PSQLException("ERROR: null value in column \"password\" of relation \"user_password_credential\" violates not-null constraint", PSQLState.NOT_NULL_VIOLATION);
+        ConstraintViolationException dataException = new ConstraintViolationException("Error",psqlException,"Password Constraint");
+        DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException("Error",dataException);
+        Mockito.doThrow(dataIntegrityViolationException).when(repo).updatePassword(newPassword,credentialId);
+
+        Assertions.assertThrows(InvalidArgumentException.class,()->target.updatePassword(newPassword,credentialId));
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"  "})
+    public void updatePasswordCredentialWhenExceptionIsThrowBecausePasswordIsEmpty(String newPassword){
+        UUID credentialId = UUID.randomUUID();
+        Assertions.assertThrows(InvalidArgumentException.class,()->target.updatePassword(newPassword,credentialId));
+    }
+
+    @Test
     public void updatePasswordCredentialWhenRuntimeExceptionIsThrow(){
-        String newPassword = "";
+        String newPassword = faker.internet().password(5,20);
         UUID credentialId = UUID.randomUUID();
 
         RuntimeException exception = new RuntimeException();
@@ -280,7 +305,7 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
 
     @Test
     public void updatePasswordCredentialWhenDataIntegrityViolationExceptionIsThrow(){
-        String newPassword = "";
+        String newPassword = faker.internet().password(5,20);
         UUID credentialId = UUID.randomUUID();
 
         DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException("Error");

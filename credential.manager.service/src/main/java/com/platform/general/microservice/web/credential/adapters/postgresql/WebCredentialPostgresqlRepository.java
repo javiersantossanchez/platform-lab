@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException.Error.PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS;
+import static org.postgresql.util.PSQLState.NOT_NULL_VIOLATION;
 
 @Service("postgresql")
 public class WebCredentialPostgresqlRepository implements WebCredentialRepository {
@@ -142,6 +143,9 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
 
     @Override
     public int updatePassword(String newPassword, UUID credentialId) {
+        if(newPassword!= null && newPassword.isBlank()){
+            throw new InvalidArgumentException(InvalidArgumentException.Error.PASSWORD_SHOULD_BE_NOT_EMPTY);
+        }
         try {
             return dao.updatePassword(newPassword,credentialId);
         }catch(DataIntegrityViolationException ex){
@@ -151,6 +155,14 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
                     PSQLException psqlException = (PSQLException) dataException.getCause();
                     if("22001".equals(psqlException.getSQLState()) && "ERROR: value too long for type character varying(50)".equals(psqlException.getMessage())){
                         throw new InvalidArgumentException(PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS);
+                    }
+                }
+            }else if(ex.getCause() instanceof ConstraintViolationException){
+                ConstraintViolationException constraintViolationException = (ConstraintViolationException) ex.getCause();
+                if(constraintViolationException.getCause() instanceof PSQLException) {
+                    PSQLException psqlException = (PSQLException) constraintViolationException.getCause();
+                    if(NOT_NULL_VIOLATION.getState().equals(psqlException.getSQLState()) && "ERROR: null value in column \"password\" of relation \"user_password_credential\" violates not-null constraint".startsWith(psqlException.getMessage())){
+                        throw new InvalidArgumentException(InvalidArgumentException.Error.PASSWORD_SHOULD_BE_NOT_NULL);
                     }
                 }
             }
