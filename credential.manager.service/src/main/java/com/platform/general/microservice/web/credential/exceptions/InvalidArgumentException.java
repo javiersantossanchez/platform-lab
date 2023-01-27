@@ -7,7 +7,8 @@ public class InvalidArgumentException extends RuntimeException {
         PAGE_SIZE_ON_PAGING_SHOULD_BE_BIGGER_THAN_ZERO("page size should be bigger than one"),
 
         USER_ID_SHOULD_BE_NOT_NULL("User id should be not null"),
-        CREDENTIAL_ID_SHOULD_BE_NOT_NULL("Credential id should be not null")
+        CREDENTIAL_ID_SHOULD_BE_NOT_NULL("Credential id should be not null"),
+        PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS("Password is bigger than required")
         ;
 
         private String errorMessage;

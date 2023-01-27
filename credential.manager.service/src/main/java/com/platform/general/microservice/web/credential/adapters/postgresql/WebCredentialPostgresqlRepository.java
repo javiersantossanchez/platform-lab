@@ -7,6 +7,7 @@ import com.platform.general.microservice.web.credential.ports.out.WebCredentialR
 import com.platform.general.microservice.web.credential.utils.PagingContext;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,12 +17,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.postgresql.util.PSQLException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException.Error.PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS;
 
 @Service("postgresql")
 public class WebCredentialPostgresqlRepository implements WebCredentialRepository {
@@ -136,8 +140,25 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
     }
 
 
-
-
+    @Override
+    public int updatePassword(String newPassword, UUID credentialId) {
+        try {
+            return dao.updatePassword(newPassword,credentialId);
+        }catch(DataIntegrityViolationException ex){
+            if(ex.getCause() instanceof DataException){
+                DataException dataException = (DataException) ex.getCause();
+                if(dataException.getCause() instanceof PSQLException) {
+                    PSQLException psqlException = (PSQLException) dataException.getCause();
+                    if("22001".equals(psqlException.getSQLState()) && "ERROR: value too long for type character varying(50)".equals(psqlException.getMessage())){
+                        throw new InvalidArgumentException(PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS);
+                    }
+                }
+            }
+            throw new WebCredentialUpdateException(ex);
+        } catch (RuntimeException ex){
+            throw new WebCredentialUpdateException(ex);
+        }
+    }
 
 
 ////////////////////////////////////////////////////////////////////

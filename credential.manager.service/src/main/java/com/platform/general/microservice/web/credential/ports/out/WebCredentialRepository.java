@@ -40,4 +40,12 @@ public interface WebCredentialRepository {
      * @throws WebCredentialNotFoundException - The id does not exist on the system
      */
     void deleteById(UUID id);
+
+    /**
+     * @param newPassword
+     * @param credentialId
+     * @return
+     */
+    int updatePassword(String newPassword, UUID credentialId);
+
 }

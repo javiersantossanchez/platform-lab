@@ -1,9 +1,12 @@
 package com.platform.general.microservice.web.credential.adapters.postgresql;
 
 import com.github.javafaker.Faker;
+import com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException;
 import com.platform.general.microservice.web.credential.test.utils.WebCredentialEntityMother;
+import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
@@ -26,6 +29,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.platform.general.microservice.web.credential.exceptions.InvalidArgumentException.Error.PASSWORD_SIZE_BIGGER_THAN_VALUE_ALLOWS;
 
 
 @Testcontainers
@@ -342,10 +347,23 @@ public class WebCredentialDaoTest  {
 
     @Test
     public void updatePasswordCredentialWithPasswordBiggerAsRequired(){
+        final String sqlErrorCodeExpected = "22001";
+        String sqlErrorCodeActual=null;
+        final String errorMessageExpected ="ERROR: value too long for type character varying(50)";
+        String errorMessageActual=null;
         final String expectedPassword = faker.internet().password(51,60);
         WebCredentialEntity credential = repository.save(WebCredentialEntityMother.DummyRandomCredential());
-        Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.updatePassword(expectedPassword,credential.getId()));
-
+        DataIntegrityViolationException exception = Assertions.assertThrows(DataIntegrityViolationException.class,()-> repository.updatePassword(expectedPassword,credential.getId()));
+        if(exception.getCause() instanceof DataException){
+            DataException dataException = (DataException) exception.getCause();
+            if(dataException.getCause() instanceof PSQLException) {
+                PSQLException psqlException = (PSQLException) dataException.getCause();
+                sqlErrorCodeActual = psqlException.getSQLState();
+                errorMessageActual = psqlException.getMessage();
+            }
+        }
+        Assertions.assertEquals(sqlErrorCodeExpected,sqlErrorCodeActual);
+        Assertions.assertEquals(errorMessageExpected,errorMessageActual);
     }
 
     @Test

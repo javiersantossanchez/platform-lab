@@ -8,6 +8,7 @@ import com.platform.general.microservice.web.credential.test.utils.WebCredential
 import com.platform.general.microservice.web.credential.utils.PagingContext;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.PSQLState;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -235,6 +238,55 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Mockito.doThrow(RuntimeException.class).when(repoResilient).findByUserId(Mockito.any(UUID.class),Mockito.any(Pageable.class));
 
         Assertions.assertThrows(WebCredentialGeneralException.class,()->target.findById(userId,paging));
+    }
+
+////////////////////////////////////////////////////////////////
+//////////////////TEST UPDATE PASSWORD /////////////////////////
+////////////////////////////////////////////////////////////////
+
+    @Test
+    public void updatePasswordWhenOk(){
+        String newPassword = "";
+        UUID credentialId = UUID.randomUUID();
+        int numberOfCredentialUpdatedExpected = 1;
+        Mockito.doReturn(numberOfCredentialUpdatedExpected).when(repo).updatePassword(newPassword,credentialId);
+        int credentialUpdated =  target.updatePassword(newPassword,credentialId);
+        Assertions.assertEquals(numberOfCredentialUpdatedExpected,credentialUpdated);
+    }
+
+    @Test
+    public void updatePasswordCredentialWhenExceptionIsThrowBecausePasswordIsBigger(){
+        String newPassword = "";
+        UUID credentialId = UUID.randomUUID();
+
+        PSQLException psqlException = new PSQLException("ERROR: value too long for type character varying(50)", PSQLState.STRING_DATA_RIGHT_TRUNCATION);
+        DataException dataException = new DataException("Error",psqlException);
+        DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException("Error",dataException);
+        Mockito.doThrow(dataIntegrityViolationException).when(repo).updatePassword(newPassword,credentialId);
+
+        Assertions.assertThrows(InvalidArgumentException.class,()->target.updatePassword(newPassword,credentialId));
+    }
+
+    @Test
+    public void updatePasswordCredentialWhenRuntimeExceptionIsThrow(){
+        String newPassword = "";
+        UUID credentialId = UUID.randomUUID();
+
+        RuntimeException exception = new RuntimeException();
+        Mockito.doThrow(exception).when(repo).updatePassword(newPassword,credentialId);
+
+        Assertions.assertThrows(WebCredentialUpdateException.class,()->target.updatePassword(newPassword,credentialId));
+    }
+
+    @Test
+    public void updatePasswordCredentialWhenDataIntegrityViolationExceptionIsThrow(){
+        String newPassword = "";
+        UUID credentialId = UUID.randomUUID();
+
+        DataIntegrityViolationException dataIntegrityViolationException = new DataIntegrityViolationException("Error");
+        Mockito.doThrow(dataIntegrityViolationException).when(repo).updatePassword(newPassword,credentialId);
+
+        Assertions.assertThrows(WebCredentialUpdateException.class,()->target.updatePassword(newPassword,credentialId));
     }
 
 }
