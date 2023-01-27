@@ -146,6 +146,9 @@ public class WebCredentialPostgresqlRepository implements WebCredentialRepositor
         if(newPassword!= null && newPassword.isBlank()){
             throw new InvalidArgumentException(InvalidArgumentException.Error.PASSWORD_SHOULD_BE_NOT_EMPTY);
         }
+        if(credentialId == null){
+            throw new InvalidArgumentException(InvalidArgumentException.Error.CREDENTIAL_ID_SHOULD_BE_NOT_NULL);
+        }
         try {
             return dao.updatePassword(newPassword,credentialId);
         }catch(DataIntegrityViolationException ex){

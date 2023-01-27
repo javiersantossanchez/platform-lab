@@ -284,6 +284,13 @@ public class WebCredentialPostgresqlRepositoryUnitTest {
         Assertions.assertThrows(InvalidArgumentException.class,()->target.updatePassword(newPassword,credentialId));
     }
 
+    @Test
+    public void updatePasswordWhenCredentialIdIsNull(){
+        String newPassword = faker.internet().password(5,20);
+        UUID credentialId = null;
+        Assertions.assertThrows(InvalidArgumentException.class,()-> target.updatePassword(newPassword,credentialId));
+    }
+
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"  "})
